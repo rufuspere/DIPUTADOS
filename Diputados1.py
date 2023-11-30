@@ -12,6 +12,13 @@
 #     name: python3
 # ---
 
+# +
+#Diputados1
+
+# +
+#PARTE 0: ESTABLECER DIRECTORIO DE TRABAJO
+# -
+
 dire=input('Introducir directorio de trabajo: \n')
 
 import os
@@ -28,6 +35,9 @@ sys.path.append(dire)
 # +
 #PARTE I: IMPORTACIÓN DE DATOS
 
+
+# +
+#PARTE I: IMPORTACIÓN DE DATOS
 
 # +
 #importar datos de las elecciones. Son del Ministerio del Interior adaptados
@@ -61,7 +71,7 @@ except:
     print('no existe')
 df2.head()#df2 es la lista de partidos y grupos 
 
- 
+
 # -
 
 #definimos función que permita conocer la estructura de un DataFrame. Es muy
@@ -135,8 +145,6 @@ for i in range(17,151):
 #print(W2)
 # -
 
-
-W2
 
 Y=[]#nombres de columnas con los votos a cada partido
 for x in range(17,84):
@@ -263,7 +271,6 @@ grupos=['DERECHA',
 'NACIONALISTAS',
 'OTROS']
 
-# +
 list_groups = {key: None for key in grupos}
 for x in grupos:#nombres de los grupos (CENTRO, DERECHA,...)
     C=[]
@@ -273,9 +280,6 @@ for x in grupos:#nombres de los grupos (CENTRO, DERECHA,...)
             C.append(str(i))
     #print(x,C)
     list_groups[x]=C
-
-
-# -
 
 list_groups
 
@@ -299,13 +303,6 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
 
 list_dgroups
 
-#extraigo los votos a cada candidatura y provincia
-votes=df0.copy()
-votes=votes[votes.columns.intersection(Y)]    
-
-
-votes
-
 #votos por grupos por provincias
 dfd=df0.copy()
 dfd= dfd.reindex(columns = dfd.columns.tolist() 
@@ -320,8 +317,7 @@ for j in range (N_PROV):#provincias
     for x in dgrupos:#grupos de partidos
         dfd.loc[j,x]=dfd.loc[j][list_dgroups[x]].sum()
 
-dfd=pd.concat([votes[Y], dfd[dgrupos]], axis=1)
-dfd.to_pickle(dire+'\\votes')
+estructura(df0)
 
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
@@ -344,12 +340,6 @@ for j in range (N_PROV):#provincias
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     S=0
-    for x in vot_grupos:#grupos de partidos
-        df0.loc[j,x]=df0.loc[j][list_vgroups[x]].sum()
-
-#votos por grupos por provincias
-for j in range (N_PROV):#provincias
-    S=0
     for x in dgrupos:#grupos de partidos
         df0.loc[j,x]=df0.loc[j][list_dgroups[x]].sum()
 
@@ -363,7 +353,6 @@ U0=[i for i in range(0,18)]
 U1=[i for i in range(18,85)]
 U3=[i for i in range(85,152)]
 U2=[i for i in range(152,157)]
-U4=[i for i in range(157,162)]
 VV=[]
 
 # +
@@ -371,17 +360,31 @@ UU0=list(df0.loc[0][U0].keys())
 UU1=list(df0.loc[0][U1].keys())
 UU2=list(df0.loc[0][U2].keys())
 UU3=list(df0.loc[0][U3].keys())
-UU4=list(df0.loc[0][U4].keys())
 
-VV=UU3
-#VV=VV.append(UU3.append(UU4))
+
 
 # -
 
-results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3],df0[UU4]], axis=1)
+list(df0.loc[0][U3].keys())
+
+results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3]], axis=1)
+
+vot_grupos
+
+results= results.reindex(columns = results.columns.tolist() 
+                                  + vot_grupos)
+
+#votos por grupos por provincias
+for j in range (N_PROV):#provincias
+    S=0
+    for x in vot_grupos:#grupos de partidos
+        try:
+            results.loc[j,x]=results.loc[j][list_vgroups[x]].sum()
+        except:
+            continue
 
 # +
-#PARTE II: ARCHIVO DE SALIDA EXCEL
+#PARTE III: ARCHIVO DE SALIDA EXCEL
 # -
 
 A=[]
@@ -389,13 +392,23 @@ for y in VV:
     if (results[y] == 0).all():
         A.append(y)
 
+results.loc[0]['1Votos']
+
+vot=list(df0.loc[0][:].keys())
+
+votes=vot[18:85]
+
+percent=list(df1.loc[0][:].keys()[147:])
+
+percent
+
 #chequeos
 #suma de votos igual a votos a candidaturas
 for j in range (N_PROV):#provincias
     print('\n','PROVINCIA',results.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}')
     S=0
     S1=0
-    for x in votes:#votos ae partidos
+    for x in votes:#votos de partidos
         S=S+results.loc[j][x].sum()
     for y in vot_grupos:
         S1=S1+results.loc[j][y].sum()
@@ -417,6 +430,67 @@ for j in range (N_PROV):#provincias
     print('--TOTAL VOTOS',f'{S:,.0f}','\n','--DIPUTADOS A CANDIDATURAS',
          f'{a:,.0f}','\n','--DIPUTADOS A GRUPOS',f'{S1:,.0f}')
 
+Sumy=df1.copy()
+D=[]
+for x in range(N_PROV):
+    for y in percent:
+        if (df1.loc[x][y]>=0.03):
+            Sumy.loc[x][y[1:]]=df1.loc[x][y[1:]]
+            D.append(int(y[1:]))
+        else:
+            Sumy.loc[x][y[1:]]=0
+D=list(set(D))
+D.sort()
+
+D = list(map(str, D))
+
+UHU0=[i for i in range(0,13)]
+UHU=list(df1.loc[0][UHU0].keys())
+
+df1[UHU].head()
+
+df1[l].head()
+
+df1[UHU].reset_index(drop=True, inplace=True)
+df1[l].reset_index(drop=True, inplace=True)
+
+masde3=pd.concat([df1[UHU],df1[l]],axis=1)
+
+df1[l].head()
+
+masde3= masde3.reindex(columns = masde3.columns.tolist() 
+                                  + grupos)
+
+to_remove = list(set(l) - set(D))
+
+len(to_remove)
+
+masde3=masde3.drop(columns=to_remove)
+
+list(set.intersection(set(list_groups['DERECHA']),set(D)))
+
+# +
+#votos por grupos por provincias
+for j in range (N_PROV):#provincias
+    S=0
+    for x in grupos:#grupos de partidos
+        masde3.loc[j,x]=masde3.loc[j][list(set.intersection(set(list_groups[x]),set(D)))].sum()
+       
+                                               
+# -
+
+masde3.loc[0][grupos].sum()
+
+for j in range (N_PROV):#provincias
+    Su=0
+    for x in D:#grupos de partidos
+        
+        if masde3.loc[j][x].any()!=0:
+            Su=Su+1
+    print(j,Su)
+    masde3.loc[j,'PARTIDOS>3']=Su
+
+
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
     Res=input("¿Qué nombre desea concatenar con 'Resultados'\n")
@@ -424,14 +498,19 @@ if F=='Y' or F=='Y'.lower():
     G=input("¿DESEA ELIMINAR VALORES NULOS DE VOTOS?\n\
     (no es conveniente si se desea comparación con resultados iniciales\n(Y/N)\n") 
     if G=='Y' or G=='Y'.lower():
-        results=results.drop(A,axis=1)
+        results=results.drop(columns=A,axis=1)
         writer = pd.ExcelWriter(Name+'.xlsx')
-        tesults.to_excel(writer,Name)
+        results.to_excel(writer,sheet_name='Hoja1')
+        masde3.to_excel(writer,sheet_name='Hoja2')
         writer.close()
     if G=='N' or G=='N'.lower():
         writer = pd.ExcelWriter(Name+'.xlsx')
-        results.to_excel(writer,Name)
+        results.to_excel(writer,sheet_name='Hoja1')
+        masde3.to_excel(writer,sheet_name='Hoja2')
         writer.close()
+
+
+#PARTE IV: GUARDAR FICHEROS DE INTERÉS
 
 
 #exporto ficheros de interés
@@ -448,6 +527,3 @@ h.close()
 q = open(dire+"\\l.pkl","wb")
 pickle.dump(l,q)
 q.close()
-
-
-
