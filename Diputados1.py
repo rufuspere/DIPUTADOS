@@ -353,23 +353,27 @@ U0=[i for i in range(0,18)]
 U1=[i for i in range(18,85)]
 U3=[i for i in range(85,152)]
 U2=[i for i in range(152,157)]
-VV=[]
 
-# +
+
+VV=[]
 UU0=list(df0.loc[0][U0].keys())
 UU1=list(df0.loc[0][U1].keys())
 UU2=list(df0.loc[0][U2].keys())
 UU3=list(df0.loc[0][U3].keys())
+UU=UU0+UU1+UU3
+UU
 
 
-
-# -
-
-list(df0.loc[0][U3].keys())
+# +
 
 results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3]], axis=1)
+# -
 
-vot_grupos
+estructura(results)
+
+VV=list(results.loc[0][UU[18:]].keys())
+
+VV
 
 results= results.reindex(columns = results.columns.tolist() 
                                   + vot_grupos)
@@ -383,16 +387,11 @@ for j in range (N_PROV):#provincias
         except:
             continue
 
+estructura(results)
+
 # +
 #PARTE III: ARCHIVO DE SALIDA EXCEL
 # -
-
-A=[]
-for y in VV:
-    if (results[y] == 0).all():
-        A.append(y)
-
-results.loc[0]['1Votos']
 
 vot=list(df0.loc[0][:].keys())
 
@@ -469,15 +468,11 @@ masde3=masde3.drop(columns=to_remove)
 
 list(set.intersection(set(list_groups['DERECHA']),set(D)))
 
-# +
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     S=0
     for x in grupos:#grupos de partidos
         masde3.loc[j,x]=masde3.loc[j][list(set.intersection(set(list_groups[x]),set(D)))].sum()
-       
-                                               
-# -
 
 masde3.loc[0][grupos].sum()
 
@@ -491,6 +486,31 @@ for j in range (N_PROV):#provincias
     masde3.loc[j,'PARTIDOS>3']=Su
 
 
+estructura(masde3)
+
+#reordeno campos
+S0=[i for i in range(0,85)]
+S1=[i for i in range(157,162)]
+S2=[i for i in range(90,157)]
+S3=[i for i in range(85,90)]
+
+SS0=list(results.loc[0][S0].keys())
+SS1=list(results.loc[0][S1].keys())
+SS2=list(results.loc[0][S2].keys())
+SS3=list(results.loc[0][S3].keys())
+
+resultados=pd.concat([results[SS0],results[SS1],results[SS2],results[SS3]],axis=1)
+
+estructura(resultados)
+
+M1=[i for i in range(18,162)]
+M=list(resultados.loc[0][M1].keys())
+
+A=[]
+for y in M:
+    if (resultados[y] == 0).all():
+        A.append(y)
+
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
     Res=input("¿Qué nombre desea concatenar con 'Resultados'\n")
@@ -498,26 +518,27 @@ if F=='Y' or F=='Y'.lower():
     G=input("¿DESEA ELIMINAR VALORES NULOS DE VOTOS?\n\
     (no es conveniente si se desea comparación con resultados iniciales\n(Y/N)\n") 
     if G=='Y' or G=='Y'.lower():
-        results=results.drop(columns=A,axis=1)
+        resultados=resultados.drop(columns=A,axis=1)
         writer = pd.ExcelWriter(Name+'.xlsx')
-        results.to_excel(writer,sheet_name='Hoja1')
-        masde3.to_excel(writer,sheet_name='Hoja2')
+        resultados.to_excel(writer,sheet_name='DatosMint')
+        masde3.to_excel(writer,sheet_name='Datos>3%')
         writer.close()
     if G=='N' or G=='N'.lower():
         writer = pd.ExcelWriter(Name+'.xlsx')
-        results.to_excel(writer,sheet_name='Hoja1')
-        masde3.to_excel(writer,sheet_name='Hoja2')
+        resultados.to_excel(writer,sheet_name='DatosMint1')
+        masde3.to_excel(writer,sheet_name='Datos>3%')
         writer.close()
 
 
+# +
 #PARTE IV: GUARDAR FICHEROS DE INTERÉS
-
+# -
 
 #exporto ficheros de interés
 df0.to_pickle(dire+"\\df0.pkl")
 df1.to_pickle(dire+"\\df1.pkl")
 df2.to_pickle(dire+"\\df2.pkl")
-results.to_pickle((dire+"\\results.pkl"))
+resultados.to_pickle((dire+"\\resultados.pkl"))
 variables={}
 variables['N_PROV']=N_PROV
 variables['N_PARTIDOS']=N_PARTIDOS
@@ -527,3 +548,7 @@ h.close()
 q = open(dire+"\\l.pkl","wb")
 pickle.dump(l,q)
 q.close()
+
+resultados.loc[30]['DDERECHA']
+
+
