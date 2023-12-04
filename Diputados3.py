@@ -118,6 +118,12 @@ print(N_PROV,N_PARTIDOS)
 
 
 # %%
+df0.head()
+
+# %%
+df0["Total votantes"]
+
+# %%
 #renombramos algunas columnas
 df0.rename(columns={'Nombre de Comunidad':'COMUNIDAD','Código de Provincia': 'NPROVINCIA',
 'Nombre de Provincia':'PROVINCIA','Total censo electoral': 'CENSO_ELECTORAL',
@@ -127,6 +133,9 @@ df0.rename(columns={'Nombre de Comunidad':'COMUNIDAD','Código de Provincia': 'N
 'Votos nulos':'VOTOS NULOS','Diputados':'DIPUTADOS'},
 inplace=True )
 
+
+# %%
+df0.loc[0]['TOTAL_VOTANTES']
 
 # %%
 #extraemos las columnas que nos serán necesarias para aplicar el método d'Hondt
@@ -174,6 +183,9 @@ DF1=DF1.dropna(axis=1,how='all')
 DF2=DF2.dropna(axis=1,how='all')
 df0=pd.concat([DF1,DF2],axis=1)
 
+
+# %%
+estructura(df0)
 
 # %%
 df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']

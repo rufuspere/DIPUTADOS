@@ -532,8 +532,52 @@ if F=='Y' or F=='Y'.lower():
 
 # +
 #PARTE IV: GUARDAR FICHEROS DE INTERÉS
-# -
 
+# +
+#creo un diccionario inverso
+b=[x[1:] for x in (vot_grupos)]
+party_grupo={}
+  
+for j in range(len(b)):
+    S=list(list_vgroups.values())[j]
+    #print(S)
+    T=vot_grupos[j]
+    #print(T)
+    #print(dict(zip(S,T)))
+    U=[vot_grupos[j][1:] for i in range(len(list_vgroups[vot_grupos[j]]))]
+    #print(dict(zip(S,U)),len(dict(zip(S,U))))
+    party_grupo.update(dict(zip(S,U)))
+
+
+
+# +
+# lista de comunidades
+CA1=list(set(df0['COMUNIDAD']))
+
+for x in range(len(CA1)):
+    CA1[x]=CA1[x].strip()
+
+#diccionario con provincias correspondientes a cada CA
+CA=dict.fromkeys(CA1, []) 
+for y in CA1:
+    U=[]
+    print(y)
+    for x in range(len(df0)):
+        if df0.loc[x]['COMUNIDAD'].strip()==y:
+            print(df0.loc[x]['NPROVINCIA'])      
+            U.append(list(df0.loc[:]['PROVINCIA'].keys())[x])
+    CA[y]=U
+
+
+
+
+# +
+# provincias
+dfprov=df0.loc[:][['NPROVINCIA','PROVINCIA']]
+
+
+
+# +
 #exporto ficheros de interés
 df0.to_pickle(dire+"\\df0.pkl")
 df1.to_pickle(dire+"\\df1.pkl")
@@ -548,7 +592,27 @@ h.close()
 q = open(dire+"\\l.pkl","wb")
 pickle.dump(l,q)
 q.close()
+s=open(dire+"\\CA.pkl","wb")
+pickle.dump(CA,s)
+s.close()
+u=open(dire+"\\dfprov.pkl","wb")
+pickle.dump(dfprov,u)
+u.close()
+t = open(dire+"\\vot_grupos.pkl","wb")
+pickle.dump(vot_grupos,t)
+t.close()
 
-resultados.loc[30]['DDERECHA']
+v=open(dire+"\\list_vgroups.pkl","wb")
+list_vgroups=pickle.dump(list_vgroups,v)
+v.close()
+w=open(dire+"\\list_dgroups.pkl","wb")
+list_dgroups=pickle.dump(list_dgroups,w)
+w.close()
+
+df0=pd.read_pickle(dire+"\\df0.pkl")
+df2=pd.read_pickle(dire+"\\df2.pkl")
+dfprov=pd.read_pickle(dire+"\\dfprov.pkl")
+
+# -
 
 
