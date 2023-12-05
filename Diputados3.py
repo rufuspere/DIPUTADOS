@@ -1066,3 +1066,18 @@ if F=='Y' or F=='Y'.lower():
 
 
 # %%
+new_l
+
+
+# %%
+for x in range (N_PROV):
+        print('Provincia:',x,',',df0.loc[x]['PROVINCIA'].strip())
+        print('-Grupo:')
+        for y in vot_grupos:
+            if df0.loc[x][list_vgroups[y]].sum()!=0:
+                print(' ',y[1:],'Votos:', f"{df0.loc[x][new_l].sum():,.0f}"
+                      ,'. Diputados:', f"{df0.loc[0][new_d].sum():,.0f}")
+
+# %%
+
+# %%

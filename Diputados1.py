@@ -157,6 +157,10 @@ for x in range(0,67):
     if ('Diputados' in W2[x]):
         Z.append(W2[x])
 
+new_l=Y
+
+new_d=Z
+
 # +
 #modificamos df0 el Data Frame que sirve de base a la asignación de escaño y
 #que contiene los datos de circunscripción y los votos y diputados
@@ -369,8 +373,6 @@ UU
 results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3]], axis=1)
 # -
 
-estructura(results)
-
 VV=list(results.loc[0][UU[18:]].keys())
 
 VV
@@ -569,15 +571,14 @@ for y in CA1:
     CA[y]=U
 
 
+# -
 
 
-# +
 # provincias
 dfprov=df0.loc[:][['NPROVINCIA','PROVINCIA']]
 
+dfd
 
-
-# +
 #exporto ficheros de interés
 df0.to_pickle(dire+"\\df0.pkl")
 df1.to_pickle(dire+"\\df1.pkl")
@@ -586,6 +587,12 @@ resultados.to_pickle((dire+"\\resultados.pkl"))
 variables={}
 variables['N_PROV']=N_PROV
 variables['N_PARTIDOS']=N_PARTIDOS
+d=open(dire+"\\new_l.pkl","wb")
+pickle.dump(new_l,d)
+d.close()
+e=open(dire+"\\new_d.pkl","wb")
+pickle.dump(new_d,e)
+e.close()
 h = open(dire+"\\variables.pkl","wb")
 pickle.dump(variables,h)
 h.close()
@@ -601,18 +608,16 @@ u.close()
 t = open(dire+"\\vot_grupos.pkl","wb")
 pickle.dump(vot_grupos,t)
 t.close()
-
+n=open(dire+"\\party_grupo.pkl","wb")
+pickle.dump(party_grupo,n)
+n.close()
 v=open(dire+"\\list_vgroups.pkl","wb")
 list_vgroups=pickle.dump(list_vgroups,v)
 v.close()
 w=open(dire+"\\list_dgroups.pkl","wb")
 list_dgroups=pickle.dump(list_dgroups,w)
 w.close()
-
-df0=pd.read_pickle(dire+"\\df0.pkl")
-df2=pd.read_pickle(dire+"\\df2.pkl")
-dfprov=pd.read_pickle(dire+"\\dfprov.pkl")
-
-# -
-
-
+pd.to_pickle(dfd,dire+"\\dfd.pkl")
+pd.to_pickle(df0,dire+"\\df0.pkl")
+pd.to_pickle(df2,dire+"\\df2.pkl")
+pd.to_pickle(dfprov,dire+"\\dfprov.pkl")

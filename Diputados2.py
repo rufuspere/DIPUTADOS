@@ -44,3 +44,6 @@ aux.Com_Aut()
 aux.provincia(42)
 
 # %%
+aux.VotEscaño_Prov(df0,4)
+
+# %%
