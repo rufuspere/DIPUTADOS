@@ -60,7 +60,7 @@ try:
     df2 = pd.read_excel(party)
 except:
     print('no existe')
-df2.head()#df2 es la lista de partidos y grupos 
+#df2 es la lista de partidos y grupos 
 
  
 
@@ -85,10 +85,6 @@ df2=pd.concat([df2,pd.DataFrame(party2.T)],ignore_index=True).copy()
 
 
 # %%
-party2.T.head()
-
-
-# %%
 #definimos función que permita conocer la estructura de un DataFrame. Es muy
 #necesario para construir Data Frames.
 def estructura(my_Frame):
@@ -106,22 +102,11 @@ def estructura(my_Frame):
 
 
 # %%
-estructura(df0)#da una lista de diccionarios donde cada diccionario es un
-#número:nombre de columna.
-
-
-# %%
 #creamos dos variables para número de provincias y de partidos
 N_PROV=len(df0)
 N_PARTIDOS=len(df2.T)
 print(N_PROV,N_PARTIDOS)
 
-
-# %%
-df0.head()
-
-# %%
-df0["Total votantes"]
 
 # %%
 #renombramos algunas columnas
@@ -133,9 +118,6 @@ df0.rename(columns={'Nombre de Comunidad':'COMUNIDAD','Código de Provincia': 'N
 'Votos nulos':'VOTOS NULOS','Diputados':'DIPUTADOS'},
 inplace=True )
 
-
-# %%
-df0.loc[0]['TOTAL_VOTANTES']
 
 # %%
 #extraemos las columnas que nos serán necesarias para aplicar el método d'Hondt
@@ -150,8 +132,7 @@ for i in range(17,151):
     if ('Diputados' in df0.loc[0].keys()[i]):
         W2.append(df0.loc[0].keys()[i])
 
-print(W1)
-print(W2)
+
 
 
 # %%
@@ -185,9 +166,6 @@ df0=pd.concat([DF1,DF2],axis=1)
 
 
 # %%
-estructura(df0)
-
-# %%
 df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
 if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
     print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
@@ -203,15 +181,7 @@ df0.insert(loc = 13,
 
 
 # %%
-df0.loc[2]['%PARTICIPACIÓN']
-
-
-# %%
 dfaux0=df0[W1[0:17]]#datos censales y resumidos por provincia
-
-
-# %%
-W1[17:]#votos
 
 
 # %%
@@ -221,9 +191,6 @@ dfaux1=df0[W1[17:]]
 Var=dict(zip(W1[17:],l))#diccionario que asigna votos a 
 #identificación numérica de partido
 
-
-# %%
-Var
 
 # %%
 dfaux2=df0[W2[0:]]
@@ -288,12 +255,6 @@ for x in vot_grupos:#nombres de los grupos (CENTRO, DERECHA,...)
     list_vgroups[x]=C
 
 # %%
-vot_grupos
-
-# %%
-list_vgroups
-
-# %%
 #grupos para votos >3%
 grupos=['DERECHA',
 'CENTRO',
@@ -311,9 +272,6 @@ for x in grupos:#nombres de los grupos (CENTRO, DERECHA,...)
             C.append(str(i))
     #print(x,C)
     list_groups[x]=C
-
-# %%
-list_groups
 
 # %%
 #grupos para diputados
@@ -336,9 +294,6 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
     list_dgroups[x]=C
 
 # %%
-list_dgroups
-
-# %%
 #votos por grupos por provincias
 dfd=df0.copy()
 dfd= dfd.reindex(columns = dfd.columns.tolist() 
@@ -354,9 +309,6 @@ diputados=diputados[diputados.columns.intersection(Z)]
 for j in range (N_PROV):#provincias
     for x in dgrupos:#grupos de partidos
         dfd.loc[j,x]=dfd.loc[j][list_dgroups[x]].sum()
-
-# %%
-estructura(df0)
 
 # %%
 #votos por grupos por provincias
@@ -389,12 +341,6 @@ for j in range (N_PROV):#provincias
 df1=df1.rename(columns=Var)
 
 # %%
-list_vgroups
-
-# %%
-estructura(df0)
-
-# %%
 U0=[i for i in range(0,18)]
 U1=[i for i in range(18,85)]
 U3=[i for i in range(85,152)]
@@ -408,25 +354,12 @@ UU1=list(df0.loc[0][U1].keys())
 UU2=list(df0.loc[0][U2].keys())
 UU3=list(df0.loc[0][U3].keys())
 UU=UU0+UU1+UU3
-UU
+
 
 
 # %%
 
 results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3]], axis=1)
-
-# %%
-estructura(results)
-
-# %%
-VV=list(results.loc[0][UU[18:]].keys())
-
-# %%
-VV
-
-# %%
-results= results.reindex(columns = results.columns.tolist() 
-                                  + vot_grupos)
 
 # %%
 #votos por grupos por provincias
@@ -437,9 +370,6 @@ for j in range (N_PROV):#provincias
             results.loc[j,x]=results.loc[j][list_vgroups[x]].sum()
         except:
             continue
-
-# %%
-estructura(results)
 
 # %%
 #PARTE III: ELIMINAR CANDIDATURAS DE <3%
@@ -455,9 +385,6 @@ for x in l:
 df3.insert(loc = 5,
           column = 'VOTOS_REPARTIR',
           value =df3[l].sum(axis=1))
-
-# %%
-estructura(df3)
 
 # %%
 #PARTE IV: TABLAS d'HONDT
@@ -613,7 +540,10 @@ for i in range(N_PROV):
 
 
 # %%
-locations
+if not any(locations):
+    print("locations está vacío")
+else:
+    print(locations)
 #donde la lista está vacía, no hay coeficientes d'Hondt duplicados.
 #donde no está vacía muestra el rango [MIN,MAX] en el que se encuentran los coeficientes empatados y
 #el intervalo siempre ha de cubrir el valor del número de diputados asignados a la provincia.
@@ -738,10 +668,7 @@ for k in range(N_PROV):
         elements_count[k].append(a)
     num_part.append(elements_count[k])    
 # el diccionario elements_count[k] nos da el par (PARTIDO, ESCAÑOS) para cada PROVINCIA k
-    print(k,elements_count[k])
-
-# %%
-n_rep
+    #print(k,elements_count[k])
 
 # %%
 #lista de candidaturas que recibirán diputados ordenadas según la regla d'Hondt
@@ -759,14 +686,14 @@ for k in range(N_PROV):
 #Asigno diputados a provincias donde no hay empates
 df4=df3.copy()
 for k in range(N_PROV):
-    print('PROV ',k)
+    #print('PROV ',k)
     if n_rep[k]==0:#si no hay duplicados en la provincia n_rep[k]==0
         for x in l:
             columna='DIPUTADOS'+x
             try:
                 
                 df4.loc[k,columna]=(elements_count[k][0][int(x)])
-                print('PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
+                #print('PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
             except:
                 continue
 df4 = df4.fillna(0)
@@ -810,16 +737,6 @@ for k in range(N_PROV):
 
 
 # %%
-dipus2[30]#contiene las tuplas (partido-1,Índice-1) que ya se han asignado
-
-# %%
-dipus3[30]#contiene las tuplas (partido,Índice-1) que han de asignarse por sorteo
-
-# %%
-for i in range(len(dipus3[30])):
-    print (dipus3[30][i][0]+1)
-
-# %%
 #asignación por sorteo
 dipus4=[[] for k in range(N_PROV)]
 for k in range(N_PROV):
@@ -834,9 +751,6 @@ for k in range(N_PROV):
     except:
         continue
 
-
-# %%
-dipus4[30]
 
 # %%
 elements_count1=[[] for k in range(N_PROV)]
@@ -854,7 +768,7 @@ for k in pr_alea:
         columna='DIPUTADOS'+x
         try:
             df5.loc[k,columna]=(elements_count1[k][0][int(x)])
-            print('PROV ',k,'PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
+            #print('PROV ',k,'PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
         except:
             continue
 df5 = df5.fillna(0)
@@ -895,22 +809,6 @@ Nvotos=df0[df0.loc[0].keys()[18:85]]
 df71=pd.concat([df7,Nvotos],axis=1)
 
 # %%
-df71.loc[:][(list_groups['DERECHA'])].sum()
-
-
-# %%
-estructura(df71)
-
-# %%
-df71.loc[30][l].sum()
-
-# %%
-df71.loc[30][Y].sum()
-
-# %%
-df71.loc[30][grupos].sum()
-
-# %%
 df71= df71.reindex(columns = df71.columns.tolist() 
                                   + vot_grupos)
 
@@ -949,12 +847,6 @@ for j in range (N_PROV):#provincias
         df71.loc[j,x]=df71.loc[j][list_dipugroups[x]].sum()
 
 # %%
-df71.loc[30]['CENTRO']
-
-# %%
-df71[dgrupos].sum()
-
-# %%
 #elimino porcentajes
 DF71=df71.copy()
 T1=[i for i in range(148,215)]
@@ -963,9 +855,6 @@ DF71=DF71.drop(T,axis=1)
 
 # %%
 DF71.reset_index(drop=True, inplace=True)
-
-# %%
-estructura(DF71)
 
 # %%
 V0=[i for i in range(0,81)]
@@ -993,9 +882,6 @@ VV=[]
 VV=VV0+VV1+VV2+VV3+VV4+VV5+VV6+VV7
 
 # %%
-DF71[VV]
-
-# %%
 DF72=DF71.copy()
 A=[]
 for y in VV:
@@ -1003,34 +889,16 @@ for y in VV:
         A.append(y)
 
 # %%
-estructura(resultados)
-
-# %%
-estructura(DF72)
-
-# %%
 #PARTE VIII: ARCHIVO DE SALIDA EXCEL
 
 # %%
-DF72[list(DF72.loc[0].keys())[225:292]].head()
-
-# %%
-#salida cono ceros
+#salida con ceros
 output1=pd.concat([DF72[list(DF72.loc[0].keys())[0:14]],DF72[list(DF72.loc[0].keys())[225:292]],DF72[list(DF72.loc[0].keys())[292:297]]],axis=1)
-
-# %%
-estructura(output1)
 
 # %%
 common=set(A).intersection(set(output1.loc[0].keys()))
 #salida sin ceros
 output2=output1.drop(columns=list(common),axis=1)
-
-# %%
-common
-
-# %%
-estructura(output2)
 
 # %%
 #salida con ceros
@@ -1064,20 +932,3 @@ if F=='Y' or F=='Y'.lower():
         output3.to_excel(writer,sheet_name='Datos>3%')
         writer.close()
 
-
-# %%
-new_l
-
-
-# %%
-for x in range (N_PROV):
-        print('Provincia:',x,',',df0.loc[x]['PROVINCIA'].strip())
-        print('-Grupo:')
-        for y in vot_grupos:
-            if df0.loc[x][list_vgroups[y]].sum()!=0:
-                print(' ',y[1:],'Votos:', f"{df0.loc[x][new_l].sum():,.0f}"
-                      ,'. Diputados:', f"{df0.loc[0][new_d].sum():,.0f}")
-
-# %%
-
-# %%

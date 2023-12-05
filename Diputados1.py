@@ -108,10 +108,6 @@ df2=pd.concat([df2,pd.DataFrame(party2.T)],ignore_index=True).copy()
 
 df2.to_pickle(dire+'\partidos')
 
-estructura(df0)#da una lista de diccionarios donde cada diccionario es un
-#número:nombre de columna.Se ve que se intercalan votos y dioutados
-
-
 #creamos dos variables para número de provincias y de partidos
 N_PROV=len(df0)
 N_PARTIDOS=len(df2.T)
@@ -141,8 +137,7 @@ for i in range(17,151):
     if ('Diputados' in df0.loc[0].keys()[i]):
         W2.append(df0.loc[0].keys()[i])
 
-#print(W1)
-#print(W2)
+
 # -
 
 
@@ -193,9 +188,6 @@ df0.insert(loc = 13,
           value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
 
 
-df0.loc[2]['%PARTICIPACIÓN']
-
-
 dfaux0=df0[W1[0:17]]#datos censales y resumidos por provincia
 
 
@@ -204,8 +196,6 @@ dfaux1=df0[W1[17:]]
 Var=dict(zip(W1[17:],l))#diccionario que asigna votos a 
 #identificación numérica de partido
 
-
-Var
 
 dfaux2=df0[W2[0:]]
 
@@ -261,12 +251,8 @@ for x in vot_grupos:#nombres de los grupos (CENTRO, DERECHA,...)
     for i in df2.loc[2][:]:#nombres de los partidos (1,2,...NPARTIDOS)
         if df2.loc[1][i] ==re.sub('V', '', x):
             C.append(str(i)+'Votos')
-    #print(x,C)
     list_vgroups[x]=C
-
-vot_grupos
-
-list_vgroups
+    
 
 #grupos para votos >3%
 grupos=['DERECHA',
@@ -284,8 +270,6 @@ for x in grupos:#nombres de los grupos (CENTRO, DERECHA,...)
             C.append(str(i))
     #print(x,C)
     list_groups[x]=C
-
-list_groups
 
 #grupos para diputados
 dgrupos=['DDERECHA',
@@ -305,8 +289,6 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
     #print(x,C)
     list_dgroups[x]=C
 
-list_dgroups
-
 #votos por grupos por provincias
 dfd=df0.copy()
 dfd= dfd.reindex(columns = dfd.columns.tolist() 
@@ -320,8 +302,6 @@ diputados=diputados[diputados.columns.intersection(Z)]
 for j in range (N_PROV):#provincias
     for x in dgrupos:#grupos de partidos
         dfd.loc[j,x]=dfd.loc[j][list_dgroups[x]].sum()
-
-estructura(df0)
 
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
@@ -349,10 +329,6 @@ for j in range (N_PROV):#provincias
 
 df1=df1.rename(columns=Var)
 
-list_vgroups
-
-estructura(df0)
-
 U0=[i for i in range(0,18)]
 U1=[i for i in range(18,85)]
 U3=[i for i in range(85,152)]
@@ -375,8 +351,6 @@ results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3]], axis=1)
 
 VV=list(results.loc[0][UU[18:]].keys())
 
-VV
-
 results= results.reindex(columns = results.columns.tolist() 
                                   + vot_grupos)
 
@@ -389,8 +363,6 @@ for j in range (N_PROV):#provincias
         except:
             continue
 
-estructura(results)
-
 # +
 #PARTE III: ARCHIVO DE SALIDA EXCEL
 # -
@@ -400,8 +372,6 @@ vot=list(df0.loc[0][:].keys())
 votes=vot[18:85]
 
 percent=list(df1.loc[0][:].keys()[147:])
-
-percent
 
 #chequeos
 #suma de votos igual a votos a candidaturas
@@ -450,21 +420,15 @@ UHU=list(df1.loc[0][UHU0].keys())
 
 df1[UHU].head()
 
-df1[l].head()
-
 df1[UHU].reset_index(drop=True, inplace=True)
 df1[l].reset_index(drop=True, inplace=True)
 
 masde3=pd.concat([df1[UHU],df1[l]],axis=1)
 
-df1[l].head()
-
 masde3= masde3.reindex(columns = masde3.columns.tolist() 
                                   + grupos)
 
 to_remove = list(set(l) - set(D))
-
-len(to_remove)
 
 masde3=masde3.drop(columns=to_remove)
 
@@ -481,14 +445,10 @@ masde3.loc[0][grupos].sum()
 for j in range (N_PROV):#provincias
     Su=0
     for x in D:#grupos de partidos
-        
         if masde3.loc[j][x].any()!=0:
             Su=Su+1
-    print(j,Su)
     masde3.loc[j,'PARTIDOS>3']=Su
 
-
-estructura(masde3)
 
 #reordeno campos
 S0=[i for i in range(0,85)]
@@ -502,8 +462,6 @@ SS2=list(results.loc[0][S2].keys())
 SS3=list(results.loc[0][S3].keys())
 
 resultados=pd.concat([results[SS0],results[SS1],results[SS2],results[SS3]],axis=1)
-
-estructura(resultados)
 
 M1=[i for i in range(18,162)]
 M=list(resultados.loc[0][M1].keys())
@@ -577,8 +535,6 @@ for y in CA1:
 # provincias
 dfprov=df0.loc[:][['NPROVINCIA','PROVINCIA']]
 
-dfd
-
 #exporto ficheros de interés
 df0.to_pickle(dire+"\\df0.pkl")
 df1.to_pickle(dire+"\\df1.pkl")
@@ -621,3 +577,5 @@ pd.to_pickle(dfd,dire+"\\dfd.pkl")
 pd.to_pickle(df0,dire+"\\df0.pkl")
 pd.to_pickle(df2,dire+"\\df2.pkl")
 pd.to_pickle(dfprov,dire+"\\dfprov.pkl")
+
+

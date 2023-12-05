@@ -23,12 +23,12 @@ import funciones as aux
 # %%
 print ("ESTA ES LA LISTA DE FUNCIONES EN EL MÓDULO 'funciones'")
 print("--1)Identificar partido:\n    partido(codigo)")
-print('--2) Listar nombre, índice, código y comunidad de una provincia:\n     provincia(x)')
-print('--3) Lista de votos y escaños por provincia:\n     Resumen_Prov(dataFrame)')
-print('--4) Lista de votos por grupo político:\n     Votos_y_Escaños_Grupos(dataFrame)')
+print('--2) Listar nombre, índice, código y comunidad de una provincia:\n     provincia(codigo)')
+print('--3) Lista de votos y escaños por provincia:\n     Resumen_Prov()')
+print('--4) Lista de votos por grupo político:\n     Votos_y_Escaños_Grupos()')
 print('--5) Lista de votos y escaños por CA:\n     Votos_y_Diputados(Com)')
-print('--6) Lista de votos y escaños por provincia:\n     VotEscaño_Prov(dataFrame,x)')
-print('--7) Comunidades con sus provincias:\n     Com_Aut()')
+print('--6) Lista de votos y escaños por provincia:\n     VotEscaño_Prov(codigo)')
+print('--7) lista comunidades con sus provincias:\n Com_Aut()')
 print('NO OLVIDE AÑADIR EL PREFIJO aux. AL NOMBRE DE LA FUNCIÓN: aux.provincia(codigo)')
 
 # %%
@@ -38,12 +38,22 @@ print ("\nAntes de iniciar Eleccion3 compruebe los resultados con las funciones 
 raise SystemExit("El programa se detiene aquí pero puede llamar a las funciones y ejecutar celdas posteriores")
 
 # %%
+aux.Votos_y_Diputados('Baleares')
+
+# %%
+aux.provincia(1)
+
+# %%
+aux.Resumen_Prov()
+
+# %%
+aux.Votos_y_Escaños_Grupos()
+
+# %%
+aux.Votos_y_Diputados('Andalucía')
+
+# %%
+aux.VotEscaño_Prov(23)
+
+# %%
 aux.Com_Aut()
-
-# %%
-aux.provincia(42)
-
-# %%
-aux.VotEscaño_Prov(df0,4)
-
-# %%

@@ -14,7 +14,7 @@
 # ---
 
 # %%
-import os, pandas as pd
+import os, pandas as pd,re
 dire=os.getcwd()
 print('Directorio de trabajo: ',os.getcwd())
 
@@ -28,6 +28,18 @@ N_PARTIDOS=variables['N_PARTIDOS']
 
 
 # %%
+d=open(dire+"\\new_l.pkl","rb")
+new_l=pickle.load(d)
+d.close()
+e=open(dire+"\\new_d.pkl","rb")
+new_d=pickle.load(e)
+e.close()
+
+# %%
+
+n=open(dire+"\\party_grupo.pkl","rb")
+party_grupo=pickle.load(n)
+n.close()
 s = open(dire+"\\CA.pkl","rb")
 CA = pickle.load(s)
 s.close()
@@ -45,12 +57,9 @@ list_dgroups=pickle.load(w)
 w.close()
 df0=pd.read_pickle(dire+"\\df0.pkl")
 df2=pd.read_pickle(dire+"\\df2.pkl")
+dfd=pd.read_pickle(dire+"\\dfd.pkl")
 dfprov=pd.read_pickle(dire+"\\dfprov.pkl")
 
-
-
-# %%
-dfprov.head()
 
 
 # %%
@@ -72,56 +81,46 @@ def provincia(x):
 
 # %%
 #lista de votos y escaños por provincia
-def Resumen_Prov(dataFrame):#df0 es el inicial   
+def Resumen_Prov():#df0 es el inicial   
     for x in range (N_PROV):
-        print('Provincia:',x,',',dataFrame.loc[x]['PROVINCIA'].strip(),';','Votos:', f"{df0.loc[x][New_l].sum():,.0f}",',','Diputados:',f"{df0.loc[x][New_d].sum():,.0f}")
+        print('Provincia:',x,',',df0.loc[x]['PROVINCIA'].strip(),';','Votos:', f"{df0.loc[x][new_l].sum():,.0f}",',','Diputados:',f"{df0.loc[x][new_d].sum():,.0f}")
 
 
 # %%
 #lista de votos por grupo político
-def Votos_y_Escaños_Grupos(dataFrame):
+def Votos_y_Escaños_Grupos():
     for x in range (N_PROV):
-        print('Provincia:',x,',',dataFrame.loc[x]['PROVINCIA'].strip())
-        print('-Grupo:')
-        for y in vot_grupos:
-            if dataFrame.loc[x][list_vgroups[y]].sum()!=0:
-                print(' ',y[1:],'Votos:', f"{dataFrame.loc[x][list_vgroups[y]].sum():,.0f}"
-                      ,'. Diputados:', f"{dataFrame.loc[0][list_dgroups[y[1:]]].sum():,.0f}")
+        print('Provincia:',x,',',df0.loc[x]['PROVINCIA'].strip())
+
+
+        for y in (df2.loc[2][:]):
+            if df0.loc[x][str(y)+'Votos'].sum()!=0:
+
+                print(' -Partido:',df2.loc[0][y],'(Grupo:',party_grupo[str(y)+'Votos'],')','; Votos:',f"{df0.loc[x][str(y)+'Votos'].sum():,.0f}",'; Diputados:',f"{df0.loc[x][str(y)+'Diputados'].sum():,.0f}")
 
 
 # %%
 #lista de votos y escaños por partido político
-def Votos_y_Escaños(dataFrame):
+def Votos_y_Escaños():
     for x in range (N_PROV):
-        print('Provincia:',x,',',dataFrame.loc[x]['PROVINCIA'].strip())
+        print('Provincia:',x,',',df0.loc[x]['PROVINCIA'].strip())
 
         for y in (df2.loc[2][:]):
             if df0.loc[x][str(y)+'Votos'].sum()!=0:
                 
-                print(' -Partido:',df2.loc[0][y],'(Grupo:',party_grupo[str(y)+'Votos'],')','; Votos:',f"{dataFrame.loc[x][str(y)+'Votos'].sum():,.0f}",'; Diputados:',f"{dataFrame.loc[x][str(y)+'Diputados'].sum():,.0f}")
-
-
-# %%
-#lista de votos y escaños por CA
-def Votos_y_Diputados(Com):
-    for x in CA[Com]:
-        print('Provincia:',x,df0.loc[x]['PROVINCIA'])
-        for z in range(N_PARTIDOS):
-            if df0.loc[x][str(z+1)+'Votos'].sum()!=0 and df0.loc[x][str(z+1)+'Diputados'].sum()!=0:
-
-                print(' -Partido:',df2.loc[0][z+1],'(',party_grupo[str(z+1)+'Votos'],')','; Votos:',f"{df0.loc[x][str(z+1)+'Votos'].sum():,.0f}",'; Diputados:',f"{df0.loc[x][str(z+1)+'Diputados'].sum():,.0f}")
+                print(' -Partido:',df2.loc[0][y],'(Grupo:',party_grupo[str(y)+'Votos'],')','; Votos:',f"{df0.loc[x][str(y)+'Votos'].sum():,.0f}",'; Diputados:',f"{df0.loc[x][str(y)+'Diputados'].sum():,.0f}")
 
 
 # %%
 #lista de votos y escaños por provincia
-def VotEscaño_Prov(dataFrame,x):
+def VotEscaño_Prov(provincia):
     
-    print('Provincia:',x,',',dataFrame.loc[x]['PROVINCIA'].strip())
+    print('Provincia:',provincia,',',df0.loc[provincia]['PROVINCIA'].strip())
 
     for y in (df2.loc[2][:]):
-        if dataFrame.loc[x][str(y)+'Votos'].sum()!=0:
+        if df0.loc[provincia][str(y)+'Votos'].sum()!=0:
                 
-            print(' -Partido:',df2.loc[0][y],'(Grupo:',party_grupo[str(y)+'Votos'],')','; Votos:',f"{dataFrame.loc[x][str(y)+'Votos'].sum():,.0f}",'; Diputados:',f"{dataFrame.loc[x][str(y)+'Diputados'].sum():,.0f}")
+            print(' -Partido:',df2.loc[0][y],'(Grupo:',party_grupo[str(y)+'Votos'],')','; Votos:',f"{df0.loc[provincia][str(y)+'Votos'].sum():,.0f}",'; Diputados:',f"{df0.loc[provincia][str(y)+'Diputados'].sum():,.0f}")
 
 
 # %%
@@ -132,15 +131,45 @@ def Com_Aut():
 
 
 # %%
+#lista de votos y escaños por CA
+def Votos_y_Diputados(Com):
+    if Com=="Baleares":
+        Com="Illes Balears"
+    if Com=="Castilla":
+        region=input("La Mancha o León")
+        if region=="La Mancha":
+            Com="Castilla - La Mancha"
+        if region=="León":
+            Com="Castilla y León"
+    for j in range(len(CA)):
+        index = list(CA.keys())[j].find(Com)
+        if index !=-1:
+            Com=list(CA.keys())[j]
+            print(Com)
+    for x in CA[Com]:
+        print('Provincia:',x,df0.loc[x]['PROVINCIA'])
+        S=0
+        for z in range(N_PARTIDOS):
+            if df0.loc[x][str(z+1)+'Votos'].sum()!=0 and df0.loc[x][str(z+1)+'Diputados'].sum()!=0:
+                S=S+df0.loc[x][str(z+1)+'Votos'].sum()
+                print(' -Partido:',df2.loc[0][z+1],'(',party_grupo[str(z+1)+'Votos'],')','; Votos:',f"{df0.loc[x][str(z+1)+'Votos'].sum():,.0f}",'; Diputados:',f"{df0.loc[x][str(z+1)+'Diputados'].sum():,.0f}")
+        print('--Diputados totales:',f"{df0.loc[x][new_d].sum():,.0f}")
+        print(' Votos totales:',f"{df0.loc[x][new_l].sum():,.0f}",'. Votos usados para escaños:',f"{S:,.0f}")
+        print(' Difrencia de votos:',f"{df0.loc[x][new_l].sum()-S:,.0f}")
+
+
+# %%
 #permiten recuperar datos que pueden ser necesarrios en 
 #cualquier celda del cuaderno de notas
 def Lista_Funciones():
-    print('identificar partido:\n partido(codigo)')
+    print('identificar partido:\n aux.partido(codigo)')
     print('listar nombre, índice, código y comunidad de una provincia:\n provincia(codigo)')
-    print('lista de votos y escaños por provincia:\n Resumen_Prov(dataFrame)')
-    print('lista de votos por grupo político:\n Votos_y_Escaños_Grupos(dataFrame)')
-    print('lista de votos y escaños por CA:\n Votos_y_Diputados(Com)')
-    print('lista de votos y escaños por provincia:\n VotEscaño_Prov(dataFrame,x)')
+    print('lista de votos y escaños por provincia:\n Resumen_Prov()')
+    print('lista de votos por grupo político:\n Votos_y_Escaños_Grupos()')
     print('lista comunidades con sus provincias:\n Com_Aut()')
+    print('lista de votos y escaños por CA:\n Votos_y_Diputados(Com)')
+    print('lista de votos y escaños por provincia:\n VotEscaño_Prov(provincia)')
+
+
 
 # %%
