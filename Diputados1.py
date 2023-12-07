@@ -200,6 +200,8 @@ dfaux2=df0[W2[0:]]
 df1=pd.concat([dfaux0,dfaux1,dfaux2], axis=1)
 # -
 
+estructura(df1)
+
 a1=pos(df1,'Número de mesas')
 
 a2=pos(df1,'Censo electoral sin CERA')
@@ -245,6 +247,8 @@ for x in l:
 # +
 #PARTE II: INTRODUCIR GRUPOS
 # -
+
+df3=df1.copy()
 
 #agrupaciones para votos registrados
 vot_grupos=['VDERECHA',
@@ -303,19 +307,16 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
     #print(x,C)
     list_dgroups[x]=C
 
-#votos por grupos por provincias
-df1= df1.reindex(columns = df1.columns.tolist() 
-                                  +vot_grupos+dgrupos+grupos)
-
+estructura(df3)
 
 # +
 for j in range (N_PROV):
     for x in l:
         columna='%'+x 
-        if df1.loc[j,columna]<barrera:
-            df1.loc[j,x]=0
+        if df3.loc[j,columna]<barrera:
+            df3.loc[j,x]=0
         else:
-            df1.loc[j,x]=df1.loc[j][x+"Votos"]
+            df3.loc[j,x]=df3.loc[j][x+"Votos"]
             
        
     
@@ -323,45 +324,51 @@ for j in range (N_PROV):
 
 for j in range (N_PROV):#provincias
     for x in vot_grupos:#grupos de partidos
-        df1.loc[j,x]=df1.loc[j][list_vgroups[x]].sum()
+        df3.loc[j,x]=df3.loc[j][list_vgroups[x]].sum()
 
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     S=0
     for x in dgrupos:#grupos de partidos
-        df1.loc[j,x]=df1.loc[j][list_dgroups[x]].sum()
+        df3.loc[j,x]=df3.loc[j][list_dgroups[x]].sum()
 
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     S=0
     for x in grupos:#grupos de partidos
-        df1.loc[j,x]=df1.loc[j][list_groups[x]].sum()
+        df3.loc[j,x]=df3.loc[j][list_groups[x]].sum()
+
+df3.loc[:]['65'].sum()
+
+estructura(df3)
 
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
-    print('\n','PROVINCIA',df1.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
+    print('\n','PROVINCIA',df3.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
     S=0
     for x in vot_grupos:#grupos de partidos
-        print(x, f'{df1.loc[j][list_vgroups[x]].sum():,.0f}')
-        S=S+df1.loc[j][list_vgroups[x]].sum()
+        print(x, f'{df3.loc[j][list_vgroups[x]].sum():,.0f}')
+        S=S+df3.loc[j][list_vgroups[x]].sum()
     print('--TOTAL VOTOS ',f'{S:,.0f}')
 
 #diputados por grupos por provincias
 for j in range (N_PROV):#provincias
-    print('\n','PROVINCIA',df1.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
+    print('\n','PROVINCIA',df3.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
     S=0
     for x in dgrupos:#grupos de partidos
-        print(x, f'{df1.loc[j][list_dgroups[x]].sum():,.0f}')
-        S=S+df1.loc[j][list_dgroups[x]].sum()
+        print(x, f'{df3.loc[j][list_dgroups[x]].sum():,.0f}')
+        S=S+df3.loc[j][list_dgroups[x]].sum()
     print('--TOTAL DIPUTADOS ',f'{S:,.0f}')
 
-results=df1.copy()
+results=df3.copy()
+
+estructura(results)
 
 # +
 #PARTE III: ARCHIVO DE SALIDA EXCEL
 # -
 
-percent=list(results.loc[0][:].keys()[pos(df1,"%1"):pos(df1,'VDERECHA')+1])
+percent=list(results.loc[0][:].keys()[pos(df3,"%1"):pos(df3,'VDERECHA')])
 
 
 #chequeos
@@ -396,7 +403,7 @@ for j in range (N_PROV):#provincias
 D=[]
 for y in l:
     
-    if (df1.loc[:][y].sum()!=0):
+    if (df3.loc[:][y].sum()!=0):
         
         D.append(int(y))
         
@@ -411,51 +418,64 @@ for x in range(0,len(D)):
 for j in range (N_PROV):#provincias
     Su=0
     for x in D:#partidos que superan la barrera
-        if df1.loc[j][x].any()!=0:
+        if df3.loc[j][x].any()!=0:
             Su=Su+1
-    df1.loc[j,'PARTIDOS>']=Su
+    df3.loc[j,'PARTIDOS>']=Su
 
 to_remove=list(set(l)-set(D))
 
-U0=[i for i in range(0,pos(df1,'1Votos'))]
-UU0=list(df1.loc[0][U0].keys())
-U1=[i for i in range(pos(df1,'DDERECHA'),pos(df1,'DNACIONALISTAS')+1)]
-UU1=list(df1.loc[0][U1].keys())
+df3.loc[:]['65'].sum()
 
-masde=pd.concat([df1[UU0],df1[l],df1[UU1]],axis=1)
+U0=[i for i in range(0,pos(df3,'1Votos'))]
+UU0=list(df3.loc[0][U0].keys())
+U1=[i for i in range(pos(df3,'DERECHA'),pos(df3,'OTROS')+1)]
+UU1=list(df3.loc[0][U1].keys())
+U2=[i for i in range(pos(df3,'1Diputados'),pos(df3,'%1'))]
+UU2=list(df3.loc[0][U2].keys())
+U3=[i for i in range(pos(df3,'DDERECHA'),pos(df3,'DOTROS')+1)]
+UU3=list(df3.loc[0][U3].keys())
+UU=UU0+UU1+UU2+UU3
 
-masde=masde.drop(columns=to_remove)
+UU3
 
-#votos por grupos por provincias
-for j in range (N_PROV):#provincias
-    S=0
-    for x in grupos:#grupos de partidos
-        masde.loc[j,x]=masde.loc[j][list(set.intersection(set(list_groups[x]),set(D)))].sum()
+masde=pd.concat([df3[UU0],df3[l],df3[UU1],df3[UU2],df3[UU3]],axis=1)
 
-U=[i for i in range(pos(df1,'%1'),pos(df1,'VDERECHA'))]
-borrar=list(df1.loc[0][U].keys())
+masde.loc[:]['65'].sum()
 
-df1=df1.drop(columns=borrar)
+U=[i for i in range(pos(df3,'%1'),pos(df3,'1'))]
+borrar=list(df3.loc[0][U].keys())
+
+df3=df3.drop(columns=borrar)
 
 A=[]
-M1=[i for i in range(pos(df1,'DIPUTADOS')+1,pos(df1,'VDERECHA'))]
-M=list(df1.loc[0][M1].keys())
+M1=[i for i in range(pos(df3,'DIPUTADOS')+1,pos(df3,'VDERECHA'))]
+M=list(df3.loc[0][M1].keys())
 for y in M:
-    if (df1[y] == 0).all():
+    if (df3[y] == 0).all():
         A.append(y)
 
-U0=[i for i in range(0,pos(df1,'DIPUTADOS')+1)]
-U1=[i for i in range(pos(df1,'1Votos'),pos(df1,'1Diputados'))]
-U2=[i for i in range(pos(df1,'VDERECHA'),pos(df1,'DDERECHA'))]
-U3=[i for i in range(pos(df1,'1Diputados'),pos(df1,'VDERECHA'))]
-U4=[i for i in range(pos(df1,'DDERECHA'),pos(df1,'DERECHA'))]
-UU0=list(df1.loc[0][U0].keys())
-UU1=list(df1.loc[0][U1].keys())
-UU2=list(df1.loc[0][U2].keys())
-UU3=list(df1.loc[0][U3].keys())
-UU4=list(df1.loc[0][U4].keys())
+A
 
-resultados=pd.concat([df1[UU0],df1[UU1],df1[UU2],df1[UU3],df1[UU4]], axis=1)
+estructura(df3)
+
+U0=[i for i in range(0,pos(df3,'DIPUTADOS')+1)]
+U1=[i for i in range(pos(df3,'1Votos'),pos(df3,'1Diputados'))]
+U2=[i for i in range(pos(df3,'VDERECHA'),pos(df3,'DDERECHA'))]
+U3=[i for i in range(pos(df3,'1Diputados'),pos(df3,'1'))]
+U4=[i for i in range(pos(df3,'DDERECHA'),pos(df3,'DERECHA'))]
+UU0=list(df3.loc[0][U0].keys())
+UU1=list(df3.loc[0][U1].keys())
+UU2=list(df3.loc[0][U2].keys())
+UU3=list(df3.loc[0][U3].keys())
+UU4=list(df3.loc[0][U4].keys())
+
+UU0+UU1+UU2+UU3+UU4
+
+UU4
+
+resultados=pd.concat([df3[UU0],df3[UU1],df3[UU2],df3[UU3],df3[UU4]], axis=1)
+
+estructura(resultados)
 
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
@@ -464,15 +484,18 @@ if F=='Y' or F=='Y'.lower():
     G=input("¿DESEA ELIMINAR VALORES NULOS DE VOTOS?\n\
     (no es conveniente si se desea comparación con resultados iniciales\n(Y/N)\n") 
     if G=='Y' or G=='Y'.lower():
-        resultados=resultados.drop(columns=A,axis=1)
+        common=set(A).intersection(set(resultados.loc[0].keys()))
+        results=resultados.drop(columns=common,axis=1)
         writer = pd.ExcelWriter(Name+'.xlsx')
-        resultados.to_excel(writer,sheet_name='DatosMint')
-        masde.to_excel(writer,sheet_name='Datos>barrera')
+        results.to_excel(writer,sheet_name='DatosMint')
+        comi=set(A).intersection(set(masde.loc[0].keys()))
+        masde1=masde.drop(columns=comi,axis=1)
+        masde1.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
     if G=='N' or G=='N'.lower():
         writer = pd.ExcelWriter(Name+'.xlsx')
         resultados.to_excel(writer,sheet_name='DatosMint1')
-        resultados.to_excel(writer,sheet_name='Datos>barrera')
+        masde.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
 
 
@@ -517,6 +540,8 @@ for y in CA1:
 
 # -
 
+
+A
 
 # provincias
 dfprov=df0.loc[:][['NPROVINCIA','PROVINCIA']]

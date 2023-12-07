@@ -169,7 +169,27 @@ def Lista_Funciones():
     print('lista comunidades con sus provincias:\n Com_Aut()')
     print('lista de votos y escaños por CA:\n Votos_y_Diputados(Com)')
     print('lista de votos y escaños por provincia:\n VotEscaño_Prov(provincia)')
+    print('lista de partidos:\n lista_partidos()')
 
 
 
 # %%
+#identificar partido
+def partidos(codigo):
+    n=str(codigo)+'Votos'
+    a=df2.loc[2][(codigo)]
+    b=df2.loc[0][codigo]
+    return a,b,party_grupo[n]
+def lista_partidos():
+    K=[[] for i in range(len(df2.loc[0])+1)]
+    for i in range(1,len(df2.loc[0].keys())+1):
+        for j in range(0,len(partidos(i))):
+            K[i].append(partidos(i)[j])
+
+    K.pop(0)
+    for i in range(0,len(df2.loc[0].keys())):
+        print ('Nº Partido:',K[i][0],'\n','Siglas:',K[i][1],'; Orientación:',K[i][2])
+
+
+# %%
+lista_partidos()
