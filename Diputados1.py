@@ -142,24 +142,6 @@ df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
           value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
 
 
-# +
-#modificamos df0 el Data Frame que sirve de base a la asignación de escaño y
-#que contiene los datos de circunscripción y los votos y diputados
-
-DF1 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
-DF2 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
-for i in range(N_PROV):
-    for x in W1:
-        DF1.loc[i][x]=df0.loc[i][x]
-for i in range(N_PROV):
-    for x in W2:
-        DF2.loc[i][x]=df0.loc[i][x]
-DF1=DF1.dropna(axis=1,how='all')
-DF2=DF2.dropna(axis=1,how='all')
-df0=pd.concat([DF1,DF2],axis=1)
-# -
-
-
 df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
 if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
     print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
@@ -194,28 +176,16 @@ new_l=Y
 
 new_d=Z
 
-W1
-
-dfaux0=df0[W1[0:pos(df0,"1Votos")]]#datos censales y resumidos por provincia
+dfaux0=df0[W1]#datos censales y resumidos por provincia
 
 
-estructura(dfaux0)
-
-dfaux1=df0[W1[pos(df0,"1Votos"):pos(df0,"1Diputados")]]
-
-estructura(dfaux1)
-
-dfaux2=df0[W2[0:]]
-
-estructura(dfaux2)
+dfaux1=df0[W2[0:]]
 
 # +
 #df1
 
-df1=pd.concat([dfaux0,dfaux1,dfaux2], axis=1)
+df1=pd.concat([dfaux0,dfaux1], axis=1)
 # -
-
-estructura(df1)
 
 a1=pos(df1,'Número de mesas')
 
@@ -316,8 +286,6 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
     #print(x,C)
     list_dgroups[x]=C
 
-estructura(df3)
-
 # +
 for j in range (N_PROV):
     for x in l:
@@ -366,8 +334,6 @@ for j in range (N_PROV):#provincias
     print('--TOTAL DIPUTADOS ',f'{S:,.0f}')
 
 results=df3.copy()
-
-estructura(results)
 
 # +
 #PARTE III: ARCHIVO DE SALIDA EXCEL
@@ -453,10 +419,6 @@ for y in M:
     if (df3[y] == 0).all():
         A.append(y)
 
-A
-
-estructura(df3)
-
 U0=[i for i in range(0,pos(df3,'DIPUTADOS')+1)]
 U1=[i for i in range(pos(df3,'1Votos'),pos(df3,'1Diputados'))]
 U2=[i for i in range(pos(df3,'VDERECHA'),pos(df3,'DDERECHA'))]
@@ -468,13 +430,7 @@ UU2=list(df3.loc[0][U2].keys())
 UU3=list(df3.loc[0][U3].keys())
 UU4=list(df3.loc[0][U4].keys())
 
-UU0+UU1+UU2+UU3+UU4
-
-UU4
-
 resultados=pd.concat([df3[UU0],df3[UU1],df3[UU2],df3[UU3],df3[UU4]], axis=1)
-
-estructura(resultados)
 
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
@@ -540,8 +496,6 @@ for y in CA1:
 # -
 
 
-A
-
 # provincias
 dfprov=df0.loc[:][['NPROVINCIA','PROVINCIA']]
 
@@ -584,7 +538,5 @@ v.close()
 w=open(dire+"\\list_dgroups.pkl","wb")
 list_dgroups=pickle.dump(list_dgroups,w)
 w.close()
-
-estructura(resultados)
 
 
