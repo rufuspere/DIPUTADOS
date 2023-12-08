@@ -41,7 +41,7 @@ while True:
     votos=voto+year+'.'+extension
     try:
         print('nombre del fichero: ',votos)
-        df0 = pd.read_excel(votos,header=0,sheet_name='Hoja')
+        df0 = pd.read_excel(votos,header=0)
         break
     except:
         print('no existe')
@@ -70,6 +70,13 @@ except:
 l=[]
 for item in df2:
     l.append(str(item))
+
+
+# %%
+#defino función que encuentra osición de columna en df
+def pos(df,col):
+    return(list(df.keys()).index(col))
+
 
 # %%
 party1=set(df2.loc[1])
@@ -120,31 +127,29 @@ inplace=True )
 
 
 # %%
-#extraemos las columnas que nos serán necesarias para aplicar el método d'Hondt
 W1=[]#datos de provincia y votos de cada partidos
 W2=[]#escaños de cada partido
-for i in range(0,17):
+for i in range(0,list(df0.keys()).index("1Votos")):
     W1.append(df0.loc[0].keys()[i])
-for i in range(17,151):
+for i in range(0,len(df0.keys())):
     if ('Votos' in df0.loc[0].keys()[i]):
         W1.append(df0.loc[0].keys()[i])
-for i in range(17,151):    
+   
     if ('Diputados' in df0.loc[0].keys()[i]):
         W2.append(df0.loc[0].keys()[i])
 
 
-
-
 # %%
 Y=[]#nombres de columnas con los votos a cada partido
-for x in range(17,84):
+leng=len(W1)
+for x in range(0,leng):
     if ('Votos' in W1[x]):
         Y.append(W1[x])
 
 
 # %%
 Z=[]#nombres de columnas con los diputados a cada partido
-for x in range(0,67):
+for x in range(0,len(W2)):
     if ('Diputados' in W2[x]):
         Z.append(W2[x])
 
@@ -175,51 +180,74 @@ else:
 
 # %%
 #inserto participación por provincia
-df0.insert(loc = 13,
+df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
           column = '%PARTICIPACIÓN',
           value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
 
 
 # %%
-dfaux0=df0[W1[0:17]]#datos censales y resumidos por provincia
+dfaux0=df0[W1[0:pos(df0,"1Votos")-1]]#datos censales y resumidos por provincia
 
 
 # %%
-dfaux1=df0[W1[17:]]
-
-# %%
-Var=dict(zip(W1[17:],l))#diccionario que asigna votos a 
-#identificación numérica de partido
-
+dfaux1=df0[W1[pos(df0,"1Votos")-1:pos(df0,"1Diputados")-1]]
 
 # %%
 dfaux2=df0[W2[0:]]
-
 
 # %%
 #df1
 
 df1=pd.concat([dfaux0,dfaux1,dfaux2], axis=1)
 
+# %%
+Var=dict(zip(W1[pos(df1,'1Votos'):],l))#diccionario que asigna votos a 
+#identificación numérica de partido
+
 
 # %%
-#eliminamos ciertas columnas innecesarias (Censo CERA, Mesas Electorales...)
+a1=pos(df1,'Número de mesas')
+
+# %%
+a2=pos(df1,'Censo electoral sin CERA')
+
+# %%
+a3=pos(df1,'Censo CERA')
+
+# %%
+a4=pos(df1,'Solicitudes voto CERA aceptadas')
+
+# %%
+a5=pos(df1,'Total votantes CER')
+
+# %%
+a6=pos(df1,'Total votantes CERA')
+
+# %%
+#eliminamos ciertas columnas innecesarias (a1=Número de mesas, a3=Censo CERA,...)
 #para obtener df1
 
-df1 = df1.drop(df1.columns[[ 4,5,6,8,9,10]], axis=1)
+df1 = df1.drop(df1.columns[[ a1,a2,a3,a4,a5,a6]], axis=1)
 
+
+# %%
+print('La barrera electoral es \n 0.03 para el Congreso\n 0.05 para las eleciones en la CAM y\n 0 para el Europarlamento')
+
+# %%
+barrera=input('barrera electoral (<1)')
+barrera=float(barrera)
 
 # %%
 #inserto número de partidos
-df1.insert(loc = 4,
+df1.insert(loc = pos(df1,'CENSO_ELECTORAL'),
           column = 'NPARTIDOS',
           value =N_PARTIDOS)
 
 
 # %%
-#partidos con más del 3% de votos
-df1.insert(loc = 5,
-          column = 'PARTIDOS>3',
+#partidos con más votos que la barrera electoral
+df1.insert(loc = pos(df1,'CENSO_ELECTORAL'),
+          column ='PARTIDOS>' ,
           value =0)
 
 
@@ -255,7 +283,7 @@ for x in vot_grupos:#nombres de los grupos (CENTRO, DERECHA,...)
     list_vgroups[x]=C
 
 # %%
-#grupos para votos >3%
+#grupos para votos >barrera
 grupos=['DERECHA',
 'CENTRO',
 'IZQUIERDA',
@@ -295,20 +323,19 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
 
 # %%
 #votos por grupos por provincias
-dfd=df0.copy()
-dfd= dfd.reindex(columns = dfd.columns.tolist() 
+df1= df1.reindex(columns = df1.columns.tolist() 
                                   + dgrupos)
 
 
 # %%
 #extraigo los diputados a cada candidatura y provincia
-diputados=df0.copy()
+diputados=df1.copy()
 diputados=diputados[diputados.columns.intersection(Z)]    
 
 # %%
 for j in range (N_PROV):#provincias
     for x in dgrupos:#grupos de partidos
-        dfd.loc[j,x]=dfd.loc[j][list_dgroups[x]].sum()
+        df1.loc[j,x]=df1.loc[j][list_dgroups[x]].sum()
 
 # %%
 #votos por grupos por provincias
@@ -331,35 +358,31 @@ for j in range (N_PROV):#provincias
     print('--TOTAL DIPUTADOS ',f'{S:,.0f}')
 
 # %%
-#votos por grupos por provincias
-for j in range (N_PROV):#provincias
-    S=0
-    for x in dgrupos:#grupos de partidos
-        df0.loc[j,x]=df0.loc[j][list_dgroups[x]].sum()
-
-# %%
 df1=df1.rename(columns=Var)
 
 # %%
-U0=[i for i in range(0,18)]
-U1=[i for i in range(18,85)]
-U3=[i for i in range(85,152)]
-U2=[i for i in range(152,157)]
+estructura(df1)
+
+# %%
+U0=[i for i in range(0,pos(df1,'1'))]
+U1=[i for i in range(pos(df1,'1'),pos(df1,'1Diputados'))]
+U3=[i for i in range(pos(df1,'1Diputados'),pos(df1,'DDERECHA'))]
+U2=[i for i in range(pos(df1,'DDERECHA'),pos(df1,'DOTROS')+1)]
 
 
 # %%
 VV=[]
-UU0=list(df0.loc[0][U0].keys())
-UU1=list(df0.loc[0][U1].keys())
-UU2=list(df0.loc[0][U2].keys())
-UU3=list(df0.loc[0][U3].keys())
-UU=UU0+UU1+UU3
+UU0=list(df1.loc[0][U0].keys())
+UU1=list(df1.loc[0][U1].keys())
+UU2=list(df1.loc[0][U2].keys())
+UU3=list(df1.loc[0][U3].keys())
+UU=UU0+UU1+UU2+UU3
 
 
 
 # %%
 
-results=pd.concat([df0[UU0],df0[UU1],df0[UU2],df0[UU3]], axis=1)
+results=pd.concat([df1[UU0],df1[UU1],df1[UU2],df1[UU3]], axis=1)
 
 # %%
 #votos por grupos por provincias
@@ -372,7 +395,7 @@ for j in range (N_PROV):#provincias
             continue
 
 # %%
-#PARTE III: ELIMINAR CANDIDATURAS DE <3%
+#PARTE III: ELIMINAR CANDIDATURAS DE <barrera
 
 # %%
 df3=df1.copy()
@@ -382,7 +405,7 @@ for x in l:
     df3[x][df3[columna] < 0.03] = 0
 
 # %%
-df3.insert(loc = 5,
+df3.insert(loc = pos(df3,'PARTIDOS>'),
           column = 'VOTOS_REPARTIR',
           value =df3[l].sum(axis=1))
 
@@ -696,7 +719,7 @@ for k in range(N_PROV):
                 #print('PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
             except:
                 continue
-df4 = df4.fillna(0)
+
 
 # %%
 #lista de provincias sin empates
@@ -796,14 +819,26 @@ df7 = df7.fillna(0)
 
 # %%
 for x in range (N_PROV):
-    df7.loc[x,'PARTIDOS>3']=df7.loc[x][l].astype(bool).sum()
+    df7.loc[x,'PARTIDOS>']=df7.loc[x][l].astype(bool).sum()
 
 
  # %%
- df7.loc[0]['PARTIDOS>3']
+ df7.loc[0]['PARTIDOS>']
 
 # %%
-Nvotos=df0[df0.loc[0].keys()[18:85]]
+estructura(df0)
+
+# %%
+b1=pos(df0,'1Votos')
+
+# %%
+b2=pos(df0,'1Diputados')
+
+# %%
+Nvotos=df0[df0.loc[0].keys()[b1:b2]]
+
+# %%
+Nvotos
 
 # %%
 df71=pd.concat([df7,Nvotos],axis=1)
@@ -847,9 +882,12 @@ for j in range (N_PROV):#provincias
         df71.loc[j,x]=df71.loc[j][list_dipugroups[x]].sum()
 
 # %%
+estructura(df71)
+
+# %%
 #elimino porcentajes
 DF71=df71.copy()
-T1=[i for i in range(148,215)]
+T1=[i for i in range(pos(df71,'%1'),pos(df71,'DDERECHA'))]
 T=list(df7.loc[0][T1].keys())
 DF71=DF71.drop(T,axis=1)
 
@@ -857,43 +895,54 @@ DF71=DF71.drop(T,axis=1)
 DF71.reset_index(drop=True, inplace=True)
 
 # %%
-V0=[i for i in range(0,81)]
-V1=[i for i in range(220,224)]
-V2=[i for i in range(225,292)]
-V3=[i for i in range(292,297)]
-V4=[i for i in range(81,148)]
-V5=[i for i in range(215,220)]
-V6=[i for i in range(148,215)]
-V7=[i for i in range(297,302)]
-W1=[i for i in range(18,85)]
+V0=[i for i in range(0,pos(DF71,'DIPUTADOS')+1)]
+V1=[i for i in range(pos(DF71,'1Votos'),pos(DF71,'VDERECHA'))]
+V2=[i for i in range(pos(DF71,'VDERECHA'),pos(DF71,'VOTROS')+1)]
+V3=[i for i in range(pos(DF71,'1Diputados'),pos(DF71,'DDERECHA'))]
+V4=[i for i in range(pos(DF71,'DDERECHA'),pos(DF71,'DOTROS')+1)]
+V5=[i for i in range(pos(DF71,'1'),pos(DF71,'1Diputados'))]
+V6=[i for i in range(pos(DF71,'DERECHA'),pos(DF71,'OTROS')+1)]
+V7=[i for i in range(pos(DF71,'DIPUTADOS1'),pos(DF71,'DERECHA'))]
+V8=[i for i in range(pos(DF71,'DIPDERECHA'),pos(DF71,'DIPOTROS')+1)]
 
-# %%
-VV0=list(DF71.loc[0].keys())[0:81]
-VV1=list(DF71.loc[0].keys())[220:224]
-VV2=list(DF71.loc[0].keys())[225:292]
-VV3=list(DF71.loc[0].keys())[292:297]
-VV4=list(DF71.loc[0].keys())[81:148]
-VV5=list(DF71.loc[0].keys())[215:220]
-VV6=list(DF71.loc[0].keys())[148:215]
-VV7=list(DF71.loc[0].keys())[297:302]
 
 # %%
 VV=[]
-VV=VV0+VV1+VV2+VV3+VV4+VV5+VV6+VV7
+VV0=list(DF71.loc[0][V0].keys())
+VV1=list(DF71.loc[0][V1].keys())
+VV2=list(DF71.loc[0][V2].keys())
+VV3=list(DF71.loc[0][V3].keys())
+VV4=list(DF71.loc[0][V4].keys())
+VV5=list(DF71.loc[0][V5].keys())
+VV6=list(DF71.loc[0][V6].keys())
+VV7=list(DF71.loc[0][V7].keys())
+VV8=list(DF71.loc[0][V8].keys())
+VV=VV0+VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
+NV=VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 
 # %%
-DF72=DF71.copy()
+DF71=DF71[VV]
+
+# %%
+NV
+
+# %%
+DF72=DF71[NV]
 A=[]
-for y in VV:
+M=list(DF72.loc[0][NV].keys())
+for y in M:
     if (DF72[y] == 0).all():
         A.append(y)
+
+# %%
+estructura(DF72)
 
 # %%
 #PARTE VIII: ARCHIVO DE SALIDA EXCEL
 
 # %%
-#salida con ceros
-output1=pd.concat([DF72[list(DF72.loc[0].keys())[0:14]],DF72[list(DF72.loc[0].keys())[225:292]],DF72[list(DF72.loc[0].keys())[292:297]]],axis=1)
+#salida con ceros de datos MinInt
+output1=resultados.copy()
 
 # %%
 common=set(A).intersection(set(output1.loc[0].keys()))
@@ -901,13 +950,22 @@ common=set(A).intersection(set(output1.loc[0].keys()))
 output2=output1.drop(columns=list(common),axis=1)
 
 # %%
-#salida con ceros
-output3=pd.concat([DF72[list(DF72.loc[0].keys())[0:81]],DF72[list(DF72.loc[0].keys())[220:225]],DF72[list(DF72.loc[0].keys())[148:215]],DF72[list(DF72.loc[0].keys())[297:302]]],axis=1)
+#salida con ceros de asignaciones
+output3=pd.concat([DF71[VV0],DF71[VV1],DF71[VV2],DF71[VV7],DF71[VV8]],axis=1)
 
 # %%
 common=set(A).intersection(set(output3.loc[0].keys()))
-#salida sin ceros
+#salida sin ceros de asignaciones
 output4=output3.drop(columns=list(common),axis=1)
+
+# %%
+#salida de >barrera con ceros
+output5=pd.concat([DF71[VV0],DF71[VV5],DF71[VV6],DF71[VV7],DF71[VV8]],axis=1)
+
+# %%
+common=set(A).intersection(set(output5.loc[0].keys()))
+#salida sin ceros de >barrera
+output6=output5.drop(columns=list(common),axis=1)
 
 # %%
 
@@ -918,17 +976,23 @@ if F=='Y' or F=='Y'.lower():
     G=input("¿DESEA ELIMINAR VALORES NULOS DE VOTOS?\n\
     (no es conveniente si se desea comparación con resultados iniciales\n(Y/N)\n") 
     if G=='Y' or G=='Y'.lower():
-        results=output2
         writer = pd.ExcelWriter(Name+'.xlsx')
-        resultados.to_excel(writer,sheet_name='DatosRealesMint')
+        results=output2
+        results.to_excel(writer,sheet_name='DatosRealesMint')
+        results=output4
         results.to_excel(writer,sheet_name='VotosReasignados')
-        output4.to_excel(writer,sheet_name='Datos>3%')
+        results=output6
+        results.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
     if G=='N' or G=='N'.lower():
-        results=output1
         writer = pd.ExcelWriter(Name+'.xlsx')
-        resultados.to_excel(writer,sheet_name='DatosRealesMint')
+        results=output1
+        results.to_excel(writer,sheet_name='DatosRealesMint')
+        results=output3
         results.to_excel(writer,sheet_name='VotosReasignados')
-        output3.to_excel(writer,sheet_name='Datos>3%')
+        results=output5
+        results.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
 
+
+# %%
