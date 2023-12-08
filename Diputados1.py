@@ -90,7 +90,7 @@ def estructura(my_Frame):
     return col_list
 
 
-#defino función que encuentra osición de columna en df
+#defino función que encuentra posición de columna en df
 def pos(df,col):
     return(list(df.keys()).index(col))
 
@@ -129,6 +129,44 @@ df0.rename(columns={'Nombre de Comunidad':'COMUNIDAD','Código de Provincia': 'N
 inplace=True )
 
 
+df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
+if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
+    print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+else:
+    print ('¡OK!\n')
+    print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
+
+#inserto participación por provincia
+df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
+          column = '%PARTICIPACIÓN',
+          value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+
+
+# +
+#modificamos df0 el Data Frame que sirve de base a la asignación de escaño y
+#que contiene los datos de circunscripción y los votos y diputados
+
+DF1 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
+DF2 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
+for i in range(N_PROV):
+    for x in W1:
+        DF1.loc[i][x]=df0.loc[i][x]
+for i in range(N_PROV):
+    for x in W2:
+        DF2.loc[i][x]=df0.loc[i][x]
+DF1=DF1.dropna(axis=1,how='all')
+DF2=DF2.dropna(axis=1,how='all')
+df0=pd.concat([DF1,DF2],axis=1)
+# -
+
+
+df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
+if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
+    print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+else:
+    print ('¡OK!\n')
+    print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
+
 W1=[]#datos de provincia y votos de cada partidos
 W2=[]#escaños de cada partido
 for i in range(0,list(df0.keys()).index("1Votos")):
@@ -156,43 +194,20 @@ new_l=Y
 
 new_d=Z
 
-# +
-#modificamos df0 el Data Frame que sirve de base a la asignación de escaño y
-#que contiene los datos de circunscripción y los votos y diputados
+W1
 
-DF1 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
-DF2 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
-for i in range(N_PROV):
-    for x in W1:
-        DF1.loc[i][x]=df0.loc[i][x]
-for i in range(N_PROV):
-    for x in W2:
-        DF2.loc[i][x]=df0.loc[i][x]
-DF1=DF1.dropna(axis=1,how='all')
-DF2=DF2.dropna(axis=1,how='all')
-df0=pd.concat([DF1,DF2],axis=1)
-# -
+dfaux0=df0[W1[0:pos(df0,"1Votos")]]#datos censales y resumidos por provincia
 
 
-df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
-if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
-    print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
-else:
-    print ('¡OK!\n')
-    print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
+estructura(dfaux0)
 
-#inserto participación por provincia
-df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
-          column = '%PARTICIPACIÓN',
-          value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+dfaux1=df0[W1[pos(df0,"1Votos"):pos(df0,"1Diputados")]]
 
-
-dfaux0=df0[W1[0:pos(df0,"1Votos")-1]]#datos censales y resumidos por provincia
-
-
-dfaux1=df0[W1[pos(df0,"1Votos")-1:pos(df0,"1Diputados")-1]]
+estructura(dfaux1)
 
 dfaux2=df0[W2[0:]]
+
+estructura(dfaux2)
 
 # +
 #df1
@@ -208,17 +223,11 @@ a2=pos(df1,'Censo electoral sin CERA')
 
 a3=pos(df1,'Censo CERA')
 
-a4=pos(df1,'Solicitudes voto CERA aceptadas')
-
-a5=pos(df1,'Total votantes CER')
-
-a6=pos(df1,'Total votantes CERA')
-
 # +
 #eliminamos ciertas columnas innecesarias (a1=Número de mesas, a3=Censo CERA,...)
 #para obtener df1
 
-df1 = df1.drop(df1.columns[[ a1,a2,a3,a4,a5,a6]], axis=1)
+df1 = df1.drop(df1.columns[[ a1,a2,a3]], axis=1)
 # -
 
 
@@ -338,10 +347,6 @@ for j in range (N_PROV):#provincias
     for x in grupos:#grupos de partidos
         df3.loc[j,x]=df3.loc[j][list_groups[x]].sum()
 
-df3.loc[:]['65'].sum()
-
-estructura(df3)
-
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     print('\n','PROVINCIA',df3.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
@@ -424,8 +429,6 @@ for j in range (N_PROV):#provincias
 
 to_remove=list(set(l)-set(D))
 
-df3.loc[:]['65'].sum()
-
 U0=[i for i in range(0,pos(df3,'1Votos'))]
 UU0=list(df3.loc[0][U0].keys())
 U1=[i for i in range(pos(df3,'DERECHA'),pos(df3,'OTROS')+1)]
@@ -436,11 +439,7 @@ U3=[i for i in range(pos(df3,'DDERECHA'),pos(df3,'DOTROS')+1)]
 UU3=list(df3.loc[0][U3].keys())
 UU=UU0+UU1+UU2+UU3
 
-UU3
-
 masde=pd.concat([df3[UU0],df3[l],df3[UU1],df3[UU2],df3[UU3]],axis=1)
-
-masde.loc[:]['65'].sum()
 
 U=[i for i in range(pos(df3,'%1'),pos(df3,'1'))]
 borrar=list(df3.loc[0][U].keys())
@@ -585,3 +584,7 @@ v.close()
 w=open(dire+"\\list_dgroups.pkl","wb")
 list_dgroups=pickle.dump(list_dgroups,w)
 w.close()
+
+estructura(resultados)
+
+
