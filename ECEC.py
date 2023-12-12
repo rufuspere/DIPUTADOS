@@ -112,7 +112,7 @@ for i in range(N_PROV):
     for j in PARTS:
         #print('provincia',i,list(dHondt[i].loc[j][2:]))
         lista_votos[i]=lista_votos[i]+list(dHondt[i].loc[j][2:])
-    
+        lista_votos[i].sort(reverse=True)
        
       
 # -
