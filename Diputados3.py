@@ -127,6 +127,29 @@ inplace=True )
 
 
 # %%
+df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
+if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
+    print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+else:
+    print ('¡OK!\n',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+
+
+# %%
+#inserto participación por provincia
+df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
+          column = '%PARTICIPACIÓN',
+          value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+
+
+# %%
+df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
+if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
+    print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
+else:
+    print ('¡OK!\n')
+    print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
+
+# %%
 W1=[]#datos de provincia y votos de cada partidos
 W2=[]#escaños de cada partido
 for i in range(0,list(df0.keys()).index("1Votos")):
@@ -137,7 +160,6 @@ for i in range(0,len(df0.keys())):
    
     if ('Diputados' in df0.loc[0].keys()[i]):
         W2.append(df0.loc[0].keys()[i])
-
 
 # %%
 Y=[]#nombres de columnas con los votos a cada partido
@@ -154,51 +176,22 @@ for x in range(0,len(W2)):
         Z.append(W2[x])
 
 # %%
-#modificamos df0 el Data Frame que sirve de base a la asignación de escaño y
-#que contiene los datos de circunscripción y los votos y diputados
+new_l=Y
 
-DF1 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
-DF2 = pd.DataFrame(data=None, columns=df0.columns, index=df0.index)
-for i in range(N_PROV):
-    for x in W1:
-        DF1.loc[i][x]=df0.loc[i][x]
-for i in range(N_PROV):
-    for x in W2:
-        DF2.loc[i][x]=df0.loc[i][x]
-DF1=DF1.dropna(axis=1,how='all')
-DF2=DF2.dropna(axis=1,how='all')
-df0=pd.concat([DF1,DF2],axis=1)
+# %%
+new_d=Z
+
+# %%
+dfaux0=df0[W1]#datos censales y resumidos por provincia
 
 
 # %%
-df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
-if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
-    print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
-else:
-    print ('¡OK!\n',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
-
-
-# %%
-#inserto participación por provincia
-df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
-          column = '%PARTICIPACIÓN',
-          value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
-
-
-# %%
-dfaux0=df0[W1[0:pos(df0,"1Votos")-1]]#datos censales y resumidos por provincia
-
-
-# %%
-dfaux1=df0[W1[pos(df0,"1Votos")-1:pos(df0,"1Diputados")-1]]
-
-# %%
-dfaux2=df0[W2[0:]]
+dfaux1=df0[W2[0:]]
 
 # %%
 #df1
 
-df1=pd.concat([dfaux0,dfaux1,dfaux2], axis=1)
+df1=pd.concat([dfaux0,dfaux1], axis=1)
 
 # %%
 Var=dict(zip(W1[pos(df1,'1Votos'):],l))#diccionario que asigna votos a 
@@ -215,19 +208,10 @@ a2=pos(df1,'Censo electoral sin CERA')
 a3=pos(df1,'Censo CERA')
 
 # %%
-a4=pos(df1,'Solicitudes voto CERA aceptadas')
-
-# %%
-a5=pos(df1,'Total votantes CER')
-
-# %%
-a6=pos(df1,'Total votantes CERA')
-
-# %%
 #eliminamos ciertas columnas innecesarias (a1=Número de mesas, a3=Censo CERA,...)
 #para obtener df1
 
-df1 = df1.drop(df1.columns[[ a1,a2,a3,a4,a5,a6]], axis=1)
+df1 = df1.drop(df1.columns[[ a1,a2,a3]], axis=1)
 
 
 # %%
@@ -361,9 +345,6 @@ for j in range (N_PROV):#provincias
 df1=df1.rename(columns=Var)
 
 # %%
-estructura(df1)
-
-# %%
 U0=[i for i in range(0,pos(df1,'1'))]
 U1=[i for i in range(pos(df1,'1'),pos(df1,'1Diputados'))]
 U3=[i for i in range(pos(df1,'1Diputados'),pos(df1,'DDERECHA'))]
@@ -382,7 +363,7 @@ UU=UU0+UU1+UU2+UU3
 
 # %%
 
-results=pd.concat([df1[UU0],df1[UU1],df1[UU2],df1[UU3]], axis=1)
+df1=pd.concat([df1[UU0],df1[UU1],df1[UU2],df1[UU3]], axis=1)
 
 # %%
 #votos por grupos por provincias
@@ -390,7 +371,7 @@ for j in range (N_PROV):#provincias
     S=0
     for x in vot_grupos:#grupos de partidos
         try:
-            results.loc[j,x]=results.loc[j][list_vgroups[x]].sum()
+            df1.loc[j,x]=df1.loc[j][list_vgroups[x]].sum()
         except:
             continue
 
@@ -402,25 +383,40 @@ df3=df1.copy()
 for x in l:
     columna='%'+x
     df3[columna]=df3[x]/df3['VOTOS_VÁLIDOS']
-    df3[x][df3[columna] < 0.03] = 0
+
 
 # %%
-df3.insert(loc = pos(df3,'PARTIDOS>'),
+df3.loc[0]['%1']
+
+# %%
+ll=[]
+for j in range (N_PROV):
+    for x in l:
+        if df3.loc[j]['%'+x] < barrera:
+            df3.loc[j,x]=0
+            ll.append(x)
+
+
+# %%
+ll=list(set(l)-set(ll))
+
+# %%
+df3.insert(loc = 5,
           column = 'VOTOS_REPARTIR',
-          value =df3[l].sum(axis=1))
+          value =df3[ll].sum(axis=1))
 
 # %%
 #PARTE IV: TABLAS d'HONDT
 
 # %%
 p=[[] for i in range(N_PROV)]
-for j in range(N_PROV):
-    c=df3.loc[j,l]
-    p[j]=[]
+for i in range(N_PROV):
+    c=df3.loc[j,ll]
+    p[i]=[]
     
     for k in range (1,int(df3.loc[j]['DIPUTADOS'])+1):
         part_voto=c/k
-        p[j].append(part_voto)
+        p[i].append(part_voto)
 #p[I][J] es una lista de dimensión N_PROVINCIAS y donde cada elemento de la lista es 
 #otra lista de longitud N_PARTIDOSxDIPUTADOS cuyo contenido es el número de votos de 
 #cada partido dividido por 1,2,...DIPUTADOS.
@@ -439,12 +435,6 @@ for i in range(N_PROV):
         dHondt[i]=pd.DataFrame(q[i])
         
 #dHondt es un array que representa la tabla d'Hondt  
-
-# %%
-for i in range(N_PROV):
-    labels = [x for x in range(1,int(df3.loc[i]['NPARTIDOS'])+1)]
-    #print(pd.DataFrame(q[i],index=labels))
-    dHondt[i]=pd.DataFrame(q[i],index=labels)
 
 # %%
 #lista_votos[I] es una lista de longitud N_PROVINCIAS que tiene los valores ordenados de la 
@@ -496,7 +486,7 @@ for i in range(N_PROV):
             S=S+1
             PR.append(i)
     if len(repitentes[i])>0:       
-        print('provincia: ', df1.loc[i]['PROVINCIA'],i,'\n',repitentes[i])
+        print('provincia: ', df3.loc[i]['PROVINCIA'],i,'\n',repitentes[i])
 
 if S==0:
     print('NO HAY CANDIDATURAS EMPATADAS')
@@ -518,10 +508,10 @@ for i in range(N_PROV):
 
 # %%
 #es la función que localiza valores en DataFrame
-i,j=np.where(np.isclose(np.array(dHondt[49],dtype=float),91964))
+i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),91964))
 indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
 print(indices)
-print(dHondt[49][dHondt[49]>0].dropna(axis=0, how='all'))
+print(dHondt[0][dHondt[0]>0].dropna(axis=0, how='all'))
 
 # %%
 #defino función que identifica y recopila valores repetidos
@@ -553,9 +543,9 @@ for i in range(N_PROV):
     for j in range (len(repeat_loc[i])):
         a=min([x for x in repeat_loc[i][j][1]])
         b=max([x for x in repeat_loc[i][j][1]])
-        if(b>=df1.loc[i]['DIPUTADOS'] and a<=df1.loc[i]['DIPUTADOS']):
-            #print(i,df1.loc[i]['PROVINCIA'].strip(),j,b>=df1.loc[i]['DIPUTADOS'] and a<=df1.loc[i]['DIPUTADOS'])
-            print(i,df1.loc[i]['PROVINCIA'].strip(),'Escaños a sortear',j,'entre las candidaturas',repeat_loc[i][j][1])
+        if(b>=df3.loc[i]['DIPUTADOS'] and a<=df3.loc[i]['DIPUTADOS']):
+            #print(i,df3.loc[i]['PROVINCIA'].strip(),j,b>=df3.loc[i]['DIPUTADOS'] and a<=df3.loc[i]['DIPUTADOS'])
+            print(i,df3.loc[i]['PROVINCIA'].strip(),'Escaños a sortear',j,'entre las candidaturas',repeat_loc[i][j][1])
             print('Mínimo',min([x for x in repeat_loc[i][j][1]]),'Máximo', max([x for x in repeat_loc[i][j][1]]))
             
             locations[i].append(a)
@@ -574,7 +564,7 @@ else:
 # %%
 for i in range(N_PROV):
     if list(locations[i]):
-        print(df1.loc[i]['PROVINCIA'].strip(),i,locations[i],'N_DIPUTADOS',int(df1.loc[i]['DIPUTADOS']))
+        print(df3.loc[i]['PROVINCIA'].strip(),i,locations[i],'N_DIPUTADOS',int(df3.loc[i]['DIPUTADOS']))
 #nos da el índice mínimo  y el máximo que comprende el número de DIPUTADOS
 
 
@@ -584,8 +574,8 @@ n_rep=[]
 pr_alea=[]
 for i in range(N_PROV):
     try:
-        n=(+int(df1.loc[i]['DIPUTADOS'])-min(locations[i]))
-        print('PROVINCIA ',df1.loc[i]['PROVINCIA'].strip(),i,' SELECCIONES ALEATORIAS ',n)
+        n=(+int(df3.loc[i]['DIPUTADOS'])-min(locations[i]))
+        print('PROVINCIA ',df3.loc[i]['PROVINCIA'].strip(),i,' SELECCIONES ALEATORIAS ',n)
         n_rep.append(n)
         pr_alea.append(i)
     except:
@@ -594,16 +584,6 @@ for i in range(N_PROV):
 s=[(i,df3.loc[i]['PROVINCIA'].strip()) for i in range(N_PROV)]
 n_rep1=list(zip(s,n_rep))       
 #n_rep1 asocia para cada provincia el número de veces a elegir al azar
-
-# %%
-S=0
-for i in range(N_PROV):
-    
-    if n_rep1[i][1]>0:
-        print(n_rep1[i])
-        S=S+1
-if S==0:
-    print('No hay sorteo')
 
 # %%
 #comprobación del muestreo
@@ -620,7 +600,7 @@ for i in range(100):
     
     for k in pr_alea:
         for j in range(len(M[k])):    
-            r=random.sample(M[k][j], int(df1.loc[k]['DIPUTADOS'])-min(locations[k]))
+            r=random.sample(M[k][j], int(df3.loc[k]['DIPUTADOS'])-min(locations[k]))
             r.sort()
             
             #print ('pasada',i+1,'provincia',k,'muestra',r)
@@ -650,8 +630,8 @@ for i in range(N_PROV):
         S1=S1+1
     else:
         # dHondt con duplicados
-        if max(locations[i])+1-min(locations[i])<=df1.loc[0]['NPARTIDOS']:
-            print('PROVINCIA CON DUPLICADOS',df1.loc[i]['PROVINCIA'].strip(),i,'\n','NÚMERO DE PARTIDOS EMPATADOS ',
+        if max(locations[i])+1-min(locations[i])<=df3.loc[0]['NPARTIDOS']:
+            print('PROVINCIA CON DUPLICADOS',df3.loc[i]['PROVINCIA'].strip(),i,'\n','NÚMERO DE PARTIDOS EMPATADOS ',
                   max(locations[i])+1-min(locations[i]))
             S2=S2+1
 print('\n','NÚMERO DE PROVINCIAS SIN DUPLICADOS',S1,'\n','NÚMERO DE PROVINCIAS CON DUPLICADOS',S2)
@@ -676,6 +656,9 @@ i,j
 #devuelve una tupla
 
 # %%
+lista_votos
+
+# %%
 #provincias sin empates
 dipus=[[] for k in range(N_PROV)]
 num_part=[]
@@ -694,16 +677,39 @@ for k in range(N_PROV):
     #print(k,elements_count[k])
 
 # %%
-#lista de candidaturas que recibirán diputados ordenadas según la regla d'Hondt
-for i in range (N_PROV):
-    print(df1.loc[i]['PROVINCIA'],dipus[i])
+len(dipus[0])
 
 # %%
-#añado columnas para guardar los escaños de cada candidatura
-for k in range(N_PROV):
-    for x in l:
-        columna='DIPUTADOS'+x
-        df3.loc[k,columna]=0
+elements_count
+
+# %%
+#lista de candidaturas que recibirán diputados ordenadas según la regla d'Hondt
+S=0
+for i in range (N_PROV):
+    S=S+1
+    print(df3.loc[i]['PROVINCIA'],dipus[i])
+print(S)
+
+# %%
+df3.loc[0,'DIPUTADOS1']
+
+# %%
+Dl=[]
+for x in l:
+    columna='DIPUTADOS'+x
+    Dl.append(columna)
+
+# %%
+Dl
+
+# %%
+for j in range(N_PROV):
+    for x in Dl:
+        df3.loc[j,x]=0
+
+ # %%
+ for x in Dl:
+    print(x,elements_count[0][0][int(x[9:])])
 
 # %%
 #Asigno diputados a provincias donde no hay empates
@@ -711,15 +717,15 @@ df4=df3.copy()
 for k in range(N_PROV):
     #print('PROV ',k)
     if n_rep[k]==0:#si no hay duplicados en la provincia n_rep[k]==0
-        for x in l:
-            columna='DIPUTADOS'+x
-            try:
-                
-                df4.loc[k,columna]=(elements_count[k][0][int(x)])
+        for x in DL:
+           
+            df4.loc[k,x]=elements_count[k][0][int(x[9:])]
                 #print('PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
-            except:
-                continue
+           
 
+
+# %%
+df4['DIPUTADOS1']
 
 # %%
 #lista de provincias sin empates
@@ -822,26 +828,8 @@ for x in range (N_PROV):
     df7.loc[x,'PARTIDOS>']=df7.loc[x][l].astype(bool).sum()
 
 
- # %%
- df7.loc[0]['PARTIDOS>']
-
 # %%
-estructura(df0)
-
-# %%
-b1=pos(df0,'1Votos')
-
-# %%
-b2=pos(df0,'1Diputados')
-
-# %%
-Nvotos=df0[df0.loc[0].keys()[b1:b2]]
-
-# %%
-Nvotos
-
-# %%
-df71=pd.concat([df7,Nvotos],axis=1)
+df71=pd.concat([df7,df0[new_l]],axis=1)
 
 # %%
 df71= df71.reindex(columns = df71.columns.tolist() 
@@ -882,25 +870,18 @@ for j in range (N_PROV):#provincias
         df71.loc[j,x]=df71.loc[j][list_dipugroups[x]].sum()
 
 # %%
-estructura(df71)
-
-# %%
-#elimino porcentajes
 DF71=df71.copy()
-T1=[i for i in range(pos(df71,'%1'),pos(df71,'DDERECHA'))]
-T=list(df7.loc[0][T1].keys())
-DF71=DF71.drop(T,axis=1)
 
 # %%
-DF71.reset_index(drop=True, inplace=True)
+estructura(df71)
 
 # %%
 V0=[i for i in range(0,pos(DF71,'DIPUTADOS')+1)]
 V1=[i for i in range(pos(DF71,'1Votos'),pos(DF71,'VDERECHA'))]
 V2=[i for i in range(pos(DF71,'VDERECHA'),pos(DF71,'VOTROS')+1)]
-V3=[i for i in range(pos(DF71,'1Diputados'),pos(DF71,'DDERECHA'))]
+V3=[i for i in range(pos(DF71,'1Diputados'),pos(DF71,'%1'))]
 V4=[i for i in range(pos(DF71,'DDERECHA'),pos(DF71,'DOTROS')+1)]
-V5=[i for i in range(pos(DF71,'1'),pos(DF71,'1Diputados'))]
+V5=l
 V6=[i for i in range(pos(DF71,'DERECHA'),pos(DF71,'OTROS')+1)]
 V7=[i for i in range(pos(DF71,'DIPUTADOS1'),pos(DF71,'DERECHA'))]
 V8=[i for i in range(pos(DF71,'DIPDERECHA'),pos(DF71,'DIPOTROS')+1)]
@@ -921,21 +902,15 @@ VV=VV0+VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 NV=VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 
 # %%
-DF71=DF71[VV]
-
-# %%
-NV
+VV
 
 # %%
 DF72=DF71[NV]
 A=[]
 M=list(DF72.loc[0][NV].keys())
 for y in M:
-    if (DF72[y] == 0).all():
+    if (DF72[y].all() == 0):
         A.append(y)
-
-# %%
-estructura(DF72)
 
 # %%
 #PARTE VIII: ARCHIVO DE SALIDA EXCEL
