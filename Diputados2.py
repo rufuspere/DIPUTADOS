@@ -14,8 +14,11 @@
 # ---
 
 # %%
-#Eleccion2: importa funciones que pueden ser útiles para analizar 
+#DIPUTADOS2: importa funciones que pueden ser útiles para analizar 
 #resultados
+
+# %%
+guion="Diputados2"
 
 # %%
 import funciones as aux
@@ -43,3 +46,13 @@ aux.lista_partidos()
 
 # %%
 aux.Votos_y_Escaños_Grupos()
+
+# %%
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO:",guion+".py")
+
+# %%
+l
+
+# %%

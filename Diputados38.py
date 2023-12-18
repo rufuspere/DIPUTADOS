@@ -17,6 +17,9 @@
 #DIPUTADOS38: PARTE VIII: ARCHIVO DE SALIDA EXCEL
 
 # %%
+guion="Diputados38"
+
+# %%
 #salida con ceros de datos MinInt
 output1=resultados.copy()
 
@@ -72,3 +75,6 @@ if F=='Y' or F=='Y'.lower():
 
 
 # %%
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO:",guion+".py")

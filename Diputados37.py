@@ -17,6 +17,9 @@
 #DIPUTADOS37: PARTE VII: ASIGNACIÓN DE ESCAÑOS DEFINITIVA
 
 # %%
+guion="Diputados37"
+
+# %%
 #votos por grupo político
 df6=df5.copy()
 for k in range(N_PROV):
@@ -81,10 +84,13 @@ for j in range (N_PROV):#provincias
         df71.loc[j,x]=df71.loc[j][list_dipugroups[x]].sum()
 
 # %%
+df71.loc[7]['DIPDERECHA']
+
+# %%
 DF71=df71.copy()
 
 # %%
-estructura(df71)
+l
 
 # %%
 V0=[i for i in range(0,pos(DF71,'DIPUTADOS')+1)]
@@ -113,7 +119,7 @@ VV=VV0+VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 NV=VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 
 # %%
-VV
+NV
 
 # %%
 DF72=DF71[NV]
@@ -122,5 +128,22 @@ M=list(DF72.loc[0][NV].keys())
 for y in M:
     if (DF72[y].all() == 0):
         A.append(y)
+
+# %%
+DF72.loc[7]['DIPDERECHA']
+
+# %%
+for i in range(len(df3)):
+    print('-PROVINCIA',i,'(',df1.loc[i]['PROVINCIA'].strip(),')','\n --DIPUTADOS:')
+    print('   DERECHA',DF72.loc[i]['DIPDERECHA'])
+    print('   IZQUIERDA',DF72.loc[i]['DIPIZQUIERDA'])
+    print('   CENTRO',DF72.loc[i]['DIPCENTRO'])
+    print('   NACIONALISTAS',DF72.loc[i]['DIPNACIONALISTAS'])
+    print('   OTROS',DF72.loc[i]['DIPOTROS'])
+
+# %%
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO:",guion+".py")
 
 # %%

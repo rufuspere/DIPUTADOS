@@ -14,7 +14,10 @@
 # ---
 
 # %%
-#DIPUTADOS36: PARTE VI: SI HAY EMPATES
+#PARTE VI: SI HAY EMPATES
+
+# %%
+guion="Diputados36"
 
 # %%
 repeated=[[] for i in range(N_PROV)]
@@ -25,11 +28,7 @@ for i in range(N_PROV):
 #valores repetidos en cada provincia en la tabla d'Hondt (un solo valor)
 
 # %%
-#es la función que localiza valores en DataFrame
-i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),91964))
-indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
-print(indices)
-print(dHondt[0][dHondt[0]>0].dropna(axis=0, how='all'))
+repeated[7]
 
 # %%
 #defino función que identifica y recopila valores repetidos
@@ -54,6 +53,22 @@ for i in range(N_PROV):
 #en la mayoría de casos es 0 el único valor que se repite
 
 # %%
+repeat_loc[7]
+
+# %%
+for i in range(N_PROV):
+    for j in range (len(repeat_loc[i])):
+        a=min([x for x in repeat_loc[i][j][1]])
+        b=max([x for x in repeat_loc[i][j][1]])
+        c=df3.loc[i]['DIPUTADOS']-1
+        
+        if(b>c and a<=c):
+           
+            print('Se precisa sorteo en provincia Nº', i,'(',df3.loc[i]['PROVINCIA'].strip(),')')
+            print('Mínimo',a,'; Índice',c,'; Máximo',b)
+         #   print(i,df3.loc[i]['PROVINCIA'].strip(),j,b>=df3.loc[i]['DIPUTADOS'] and a<=df3.loc[i]['DIPUTADOS'])
+
+# %%
 #devuelve el rango de las posiciones de lista_votos en que se repite el valor que ha de ser asignado
 #a un partido aleatoriamente ya que el coeficiente de d'Hondt es el mismo para varios partidos.
 locations=[[] for i in range(N_PROV)]
@@ -61,39 +76,41 @@ for i in range(N_PROV):
     for j in range (len(repeat_loc[i])):
         a=min([x for x in repeat_loc[i][j][1]])
         b=max([x for x in repeat_loc[i][j][1]])
-        if(b>=df3.loc[i]['DIPUTADOS'] and a<=df3.loc[i]['DIPUTADOS']):
-            #print(i,df3.loc[i]['PROVINCIA'].strip(),j,b>=df3.loc[i]['DIPUTADOS'] and a<=df3.loc[i]['DIPUTADOS'])
-            print(i,df3.loc[i]['PROVINCIA'].strip(),'Escaños a sortear',j,'entre las candidaturas',repeat_loc[i][j][1])
-            print('Mínimo',min([x for x in repeat_loc[i][j][1]]),'Máximo', max([x for x in repeat_loc[i][j][1]]))
+        e=b-a+1
+        if(b>df3.loc[i]['DIPUTADOS']-1 and a<=df3.loc[i]['DIPUTADOS']-1):
+            print('Provincia Nº:',i,'(',df3.loc[i]['PROVINCIA'].strip(),')')
+            print('Escaños a sortear:',e,'entre las candidaturas de índices',repeat_loc[i][j][1])
+            print('Mínimo:',min([x for x in repeat_loc[i][j][1]]),'; Máximo:', max([x for x in repeat_loc[i][j][1]]),'\n')
             
             locations[i].append(a)
             locations[i].append(b)
+#muchas de ellas no serán susceptibles de sorteo al no cubrir
+#el número de diputados de la provincia
 
+
+# %%
+locations[2]
 
 # %%
 if not any(locations):
     print("locations está vacío")
 else:
-    print(locations)
+    for i in range(N_PROV):
+        if len(locations[i])!=0:
+            print('Provincia Nº:',i,'(',df3.loc[i]['PROVINCIA'].strip(),'):',locations[i],';N_DIPUTADOS:',int(df3.loc[i]['DIPUTADOS']))
+#nos da el índice mínimo  y el máximo que comprende el número de DIPUTADOS
 #donde la lista está vacía, no hay coeficientes d'Hondt duplicados.
 #donde no está vacía muestra el rango [MIN,MAX] en el que se encuentran los coeficientes empatados y
 #el intervalo siempre ha de cubrir el valor del número de diputados asignados a la provincia.
 
 # %%
-for i in range(N_PROV):
-    if list(locations[i]):
-        print(df3.loc[i]['PROVINCIA'].strip(),i,locations[i],'N_DIPUTADOS',int(df3.loc[i]['DIPUTADOS']))
-#nos da el índice mínimo  y el máximo que comprende el número de DIPUTADOS
-
-
-# %%
 #el número de veces que se ha de elegir al azar en cada provincia
 n_rep=[]
-pr_alea=[]
+pr_alea=[]#provincias donde hacer sorteo
 for i in range(N_PROV):
     try:
         n=(+int(df3.loc[i]['DIPUTADOS'])-min(locations[i]))
-        print('PROVINCIA ',df3.loc[i]['PROVINCIA'].strip(),i,' SELECCIONES ALEATORIAS ',n)
+        print('Provincia Nº:',i,'(',df3.loc[i]['PROVINCIA'].strip(),'):',' SELECCIONES ALEATORIAS ',n)
         n_rep.append(n)
         pr_alea.append(i)
     except:
@@ -104,38 +121,42 @@ n_rep1=list(zip(s,n_rep))
 #n_rep1 asocia para cada provincia el número de veces a elegir al azar
 
 # %%
+pr_alea
+
+# %%
 #comprobación del muestreo
+
+# %%
+import random
 M=[[] for o in range(N_PROV)]
 for o in range(N_PROV):
     try:
-        m=[i for i in range(min(locations[o]),max(locations[o]))]
+        m=[i for i in range(min(locations[o]),max(locations[o])+1)]
         M[o].append(m)
-        print('POSICIONES DE DUPLICADOS: ','PROVINCIA',o,M[o])
+        print('POSICIONES A SORTEAR EN PROVINCIA:',o,';Número:',len(M[o]),';',M[o])
     except:
         continue
-N=[[] for o in range(N_PROV)]
-for i in range(100):
-    
-    for k in pr_alea:
-        for j in range(len(M[k])):    
-            r=random.sample(M[k][j], int(df3.loc[k]['DIPUTADOS'])-min(locations[k]))
-            r.sort()
-            
-            #print ('pasada',i+1,'provincia',k,'muestra',r)
-            N[k].append(r)
-        
-alea49 = pd.DataFrame(N[49], columns = ['alea'])
-alea30=[elem for sublist in N[30] for elem in sublist]
-alea30 = pd.DataFrame(alea30, columns = ['alea'])
+
 
 # %%
-alea30
+#función que valora la frecuencia de cada partido en el sorteo
+def suerte(provincia,veces):
+    N=[[] for o in range(N_PROV)]
+    for i in range(veces):
+
+        for k in pr_alea:
+            for j in range(len(M[k])):    
+                r=random.sample(M[k][0], int(df3.loc[k]['DIPUTADOS'])-min(locations[k]))
+                r.sort()
+
+                #print ('pasada',i+1,'provincia',k,'muestra',r)
+                N[k].append(r)
+    cuenta=pd.DataFrame(N[provincia], columns = ['alea'])
+    return('Porcentaje de cada valor del indice:',100*(cuenta['alea'].value_counts())/veces)
+
 
 # %%
-counts30 = alea30['alea'].value_counts().to_dict()
-counts49 = alea49['alea'].value_counts().to_dict()
-counts30 = dict(sorted(counts30.items()))
-counts49 = dict(sorted(counts49.items()))
+suerte(7,1000)
 
 # %%
 #provincias con y sin duplicados
@@ -165,43 +186,50 @@ def CountFrequency(my_list):
 
 
 # %%
-#es el método para localizar en d'Hondt los valores de los coeficientes de la tabla
-M=np.array(dHondt[0],dtype=float)
-i,j=np.where(np.isclose(M,39036))
+import numpy as np
+#es la función que localiza valores en DataFrame
+i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),34693))
+indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
+print('Indices',indices)
 
 # %%
 i,j
 #devuelve una tupla
 
 # %%
-lista_votos
+M=np.array(dHondt[0],dtype=float)
+i,j=np.where(np.isclose(M,104079))
 
 # %%
-#provincias sin empates
+i,j
+
+# %%
+#provincias sin sorteo
 dipus=[[] for k in range(N_PROV)]
 num_part=[]
 elements_count=[[] for k in range(N_PROV)]
 for k in range(N_PROV):
     dipus[k]=[]
     if n_rep[k]==0:
-        for x in lista_votos[k][0:int(df3.loc[k]['DIPUTADOS'])]:
+        f=[]
+        for x in list(set(lista_votos[k][0:int(df3.loc[k]['DIPUTADOS'])])):
             M=np.array(dHondt[k],dtype=float)
             i,j=np.where(np.isclose(M,x))
-            dipus[k].append(i[0]+1)
+            f.append(list(i))
+        #print(k,f)
+        
+        for z in range(len(f)):
+            dipus[k]=dipus[k]+f[z]
         a=CountFrequency(dipus[k])
         elements_count[k].append(a)
-    num_part.append(elements_count[k])    
-# el diccionario elements_count[k] nos da el par (PARTIDO, ESCAÑOS) para cada PROVINCIA k
-    #print(k,elements_count[k])
+    num_part.append(elements_count[k])
 
 # %%
-len(dipus[0])
+dipus[2]
 
 # %%
-elements_count
-
-# %%
-#lista de candidaturas que recibirán diputados ordenadas según la regla d'Hondt
+#lista de candidaturas que recibirán diputados sin muestreo 
+#ordenadas según la regla d'Hondt
 S=0
 for i in range (N_PROV):
     S=S+1
@@ -209,9 +237,9 @@ for i in range (N_PROV):
 print(S)
 
 # %%
-df3.loc[0,'DIPUTADOS1']
-
-# %%
+l=[]
+for item in df2:
+    l.append(str(item))
 Dl=[]
 for x in l:
     columna='DIPUTADOS'+x
@@ -225,25 +253,40 @@ for j in range(N_PROV):
     for x in Dl:
         df3.loc[j,x]=0
 
- # %%
- for x in Dl:
-    print(x,elements_count[0][0][int(x[9:])])
+# %%
+#corrijo los dHondt para que coincidan los índices con el número de partido
+pretty_dict=[[] for x in range(N_PROV)]
+indhondt=[[] for x in range(N_PROV)]
+indi=[[] for x in range(N_PROV)]
+indef=[[] for x in range(N_PROV)]
+for j in range(N_PROV):
+    indhondt[j]=[int(i) for i in dHondt[j].index.tolist()]
+    indi[j]=[i for i in range(len(dHondt[j].index.tolist()))]
+    indef[j]=dict(zip(indi[j],indhondt[j]))
+    #print(j, indef[j])
+    try:
+        pretty_dict[j] = {indef[j][k]: v for k, v in elements_count[j][:][0].items()}
+    except:
+        continue
+
+
+# %%
+pretty_dict[2] 
 
 # %%
 #Asigno diputados a provincias donde no hay empates
 df4=df3.copy()
+P=[[] for k in range(N_PROV)]
 for k in range(N_PROV):
-    #print('PROV ',k)
+    for j in list(pretty_dict[k]):
+        P[k].append('DIPUTADOS'+str(j))
     if n_rep[k]==0:#si no hay duplicados en la provincia n_rep[k]==0
-        for x in DL:
-           
-            df4.loc[k,x]=elements_count[k][0][int(x[9:])]
-                #print('PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
-           
-
+        
+        for x in P[k]:
+            df4.loc[k,x]=pretty_dict[k][int(x[9:])]
 
 # %%
-df4['DIPUTADOS1']
+df4['DIPUTADOS3']
 
 # %%
 #lista de provincias sin empates
@@ -257,6 +300,12 @@ for k in range(N_PROV):
     if n_rep[k]!=0:
         emp.append(df1.loc[k]['PROVINCIA'].strip())
 
+
+# %%
+emp
+
+# %%
+nemp
 
 # %%
 #provincias con empates
@@ -275,12 +324,16 @@ for k in range(N_PROV):
         for x in F:#coeficientes d'Hondt a considerar
             M=np.array(dHondt[k],dtype=float)
             i,j=np.where(np.isclose(M,x))
-            v=list(zip(i+1,j))
+            v=list(zip(i,j))
             print(k,x,v,i[0])
             dipus1[k].append(v)
             flat_list = [item for sublist in dipus1[k][:] for item in sublist]
             dipus2[k]= [item for item in flat_list[:min(locations[k])]]
             dipus3[k]=[item for item in flat_list[min(locations[k]):]]
+#dipus3 contiene para cada provincia los indices de los partidos
+#entre los que hay que sortear los escaños.
+#si p.e. dipus3[7]=[(0, 6), (2, 6)] quier decir que el sorteo tendrá que
+#elegir entre una de las dos tuplas.
 
 
 # %%
@@ -297,7 +350,15 @@ for k in range(N_PROV):
             dipus4[k].append(dipus3[k][i][0])
     except:
         continue
+#dipus4 lista los indices de los partidos que reciben diputado.
+#P.e. si dipus4[3]=[2, 3, 2, 2, 3, 2, 1] la provincia 4 recibe
+# 4 escaños para el partido de índice 2, 2 escaños para el 
+#de índice 3 y 1 escaño para el partido 1.
 
+
+
+# %%
+dipus4[0]
 
 # %%
 elements_count1=[[] for k in range(N_PROV)]
@@ -308,16 +369,44 @@ for k in pr_alea:
 # el diccionario elements1_count[k] nos da el par (PARTIDO, ESCAÑOS) para cada PROVINCIA k
 
 # %%
+#corrijo los dHondt para que coincidan los índices con el número de partido
+New_pretty_dict=[[] for x in range(N_PROV)]
+New_indhondt=[[] for x in range(N_PROV)]
+New_indi=[[] for x in range(N_PROV)]
+New_indef=[[] for x in range(N_PROV)]
+for j in range(N_PROV):
+    New_indhondt[j]=[int(i) for i in dHondt[j].index.tolist()]
+    New_indi[j]=[i for i in range(len(dHondt[j].index.tolist()))]
+    New_indef[j]=dict(zip(New_indi[j],New_indhondt[j]))
+    print(j, New_indef[j])
+    try:
+        New_pretty_dict[j] = {New_indef[j][k]: v for k, v in elements_count1[j][:][0].items()}
+    except:
+        continue
+
+
+# %%
+New_pretty_dict[7]
+
+# %%
 #Asigno diputados a provincias donde hay empates
 df5=df4.copy()
 for k in pr_alea:
     for x in l:
         columna='DIPUTADOS'+x
         try:
-            df5.loc[k,columna]=(elements_count1[k][0][int(x)])
+            df5.loc[k,columna]=( New_pretty_dict[k][int(x)])
             #print('PROV ',k,'PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
         except:
             continue
 df5 = df5.fillna(0)
+
+# %%
+df5.loc[5]['DIPUTADOS3']
+
+# %%
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO:",guion+".py")
 
 # %%

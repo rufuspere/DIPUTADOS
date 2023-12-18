@@ -21,38 +21,45 @@ guion="Diputados33"
 
 # %%
 df3=df1.copy()
-for x in l:
-    columna='%'+x
-    df3[columna]=df3[x]/df3['VOTOS_VÁLIDOS']
 
+
+# %%
+estructura(df3)
 
 # %%
 df3.loc[0]['%1']
 
 # %%
-for j in range (N_PROV):#provincias
-    Su=0
-    for x in D:#partidos que superan la barrera
-        if df3.loc[j][x].any()!=0:
-            Su=Su+1
-    df3.loc[j,'PARTIDOS>']=Su
-
-# %%
-ll=[]
+l_barr=[[] for j in range(N_PROV)]
 for j in range (N_PROV):
     for x in l:
         if df3.loc[j]['%'+x] < barrera:
             df3.loc[j,x]=0
-            ll.append(x)
-
+            l_barr[j].append(x)
 
 # %%
-ll=list(set(l)-set(ll))
+for j in range (N_PROV):#provincias
+    Su=0
+    if df3.loc[j]['%'+x] >= barrera:#partidos que superan la barrera
+        Su=Su+1
+    df3.loc[j,'PARTIDOS>']=Su
+
+# %%
+#anulo valores de votos <barrera
+for j in range (N_PROV):
+    for x in l_barr[j]:
+        if df3.loc[j]['%'+x] < barrera:
+            df3.loc[j,x]=0
+            
+
 
 # %%
 df3.insert(loc = 5,
           column = 'VOTOS_REPARTIR',
-          value =df3[ll].sum(axis=1))
+          value =df3[l].sum(axis=1))
+
+# %%
+df3.loc[7]['VOTOS_REPARTIR']
 
 # %%
 print("---------------------------------------------------",

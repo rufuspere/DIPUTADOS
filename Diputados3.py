@@ -18,7 +18,7 @@
 
 
 # %%
-#PARTE I: IMPORTACIÓN DE DATOS
+#PARTE I: IMPORTACIÓN DE DATOS: Diputados31.py
 
 # %%
 import os
@@ -242,7 +242,7 @@ for x in l:
 
 
 # %%
-#PARTE II: INTRODUCIR GRUPOS
+#PARTE II: INTRODUCIR GRUPOS: Diputados32.py
 
 # %%
 #agrupaciones para votos
@@ -376,17 +376,15 @@ for j in range (N_PROV):#provincias
             continue
 
 # %%
-#PARTE III: ELIMINAR CANDIDATURAS DE <barrera
-
-# %%
-df3=df1.copy()
-for x in l:
-    columna='%'+x
-    df3[columna]=df3[x]/df3['VOTOS_VÁLIDOS']
-
+#PARTE III: ELIMINAR CANDIDATURAS DE <barrera: Diputados33.py
 
 # %%
 df3.loc[0]['%1']
+
+# %%
+df3=df1.copy()
+
+
 
 # %%
 ll=[]
@@ -406,7 +404,7 @@ df3.insert(loc = 5,
           value =df3[ll].sum(axis=1))
 
 # %%
-#PARTE IV: TABLAS d'HONDT
+#PARTE IV: TABLAS d'HONDT. Diputados34.py
 
 # %%
 p=[[] for i in range(N_PROV)]
@@ -468,7 +466,7 @@ if F=='Y' or F=='Y'.lower():
         writer.close()
 
 # %%
-#PARTE V: COMPROBAR SI HAY EMPATES
+#PARTE V: COMPROBAR SI HAY EMPATES.Diputados35.py
 
 # %%
 #vemos la lista de los valores repetidos en cada provincia:  repitentes[I] extaídos de lista_votos[I]
@@ -496,7 +494,7 @@ else:
     Empates=1
 
 # %%
-#PARTE VI: SI HAY EMPATES
+#PARTE VI: SI HAY EMPATES.Diputados36.py
 
 # %%
 repeated=[[] for i in range(N_PROV)]
@@ -803,7 +801,7 @@ for k in pr_alea:
 df5 = df5.fillna(0)
 
 # %%
-#PARTE VII: ASIGNACIÓN DE ESCAÑOS DEFINITIVA
+#PARTE VII: ASIGNACIÓN DE ESCAÑOS DEFINITIVA. Diputados37.py
 
 # %%
 #votos por grupo político
@@ -913,7 +911,7 @@ for y in M:
         A.append(y)
 
 # %%
-#PARTE VIII: ARCHIVO DE SALIDA EXCEL
+#PARTE VIII: ARCHIVO DE SALIDA EXCEL.Diputados38.py
 
 # %%
 #salida con ceros de datos MinInt
@@ -969,5 +967,3 @@ if F=='Y' or F=='Y'.lower():
         results.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
 
-
-# %%

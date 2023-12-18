@@ -17,6 +17,9 @@
 #DIPUTADOS35:PARTE V: COMPROBAR SI HAY EMPATES
 
 # %%
+guion="Diputados35"
+
+# %%
 #vemos la lista de los valores repetidos en cada provincia:  repitentes[I] extaídos de lista_votos[I]
 repitentes=[[] for i in range(N_PROV) ]
 S=0
@@ -36,9 +39,13 @@ for i in range(N_PROV):
 
 if S==0:
     print('NO HAY CANDIDATURAS EMPATADAS')
+    Empates=0
     
 else:
     print('Hay candidaturas empatadas en provincias',set(PR))
     Empates=1
 
 # %%
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO:",guion+".py")

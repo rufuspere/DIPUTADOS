@@ -70,19 +70,13 @@ except:
 l=[]
 for item in df2:
     l.append(str(item))
+l_sinbarr=l
 
 
 # %%
 #defino función que encuentra osición de columna en df
 def pos(df,col):
     return(list(df.keys()).index(col))
-
-
-# %%
-party1=set(df2.loc[1])
-grupos=list(party1)
-party2=pd.Series(df2.columns.values,index=df2.columns.values)
-party2=pd.DataFrame(party2)
 
 
 # %%
@@ -148,6 +142,9 @@ if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
 else:
     print ('¡OK!\n')
     print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
+
+# %%
+list(df0.keys())
 
 # %%
 W1=[]#datos de provincia y votos de cada partidos
@@ -240,3 +237,8 @@ for x in l:
     columna='%'+x
     df1[columna]=df1[x+'Votos']/df1['VOTOS_VÁLIDOS']
 
+
+# %%
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO:",guion+".py")
