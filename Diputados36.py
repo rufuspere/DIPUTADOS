@@ -14,7 +14,7 @@
 # ---
 
 # %%
-#PARTE VI: SI HAY EMPATES
+#Diputados36: PARTE VI: SI HAY EMPATES
 
 # %%
 guion="Diputados36"

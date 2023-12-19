@@ -24,6 +24,20 @@ guion="Diputados38"
 output1=resultados.copy()
 
 # %%
+estructura(output1)
+
+# %%
+list(output1.loc[0].keys())
+
+# %%
+A=[]
+M1=[i for i in range(pos(output1,'1Votos'),pos(output1,'DDERECHA'))]
+M=list(output1.loc[0][M1].keys())
+for y in M:
+    if (output1[y] == 0).all():
+        A.append(y)
+
+# %%
 common=set(A).intersection(set(output1.loc[0].keys()))
 #salida sin ceros
 output2=output1.drop(columns=list(common),axis=1)
@@ -33,7 +47,15 @@ output2=output1.drop(columns=list(common),axis=1)
 output3=pd.concat([DF71[VV0],DF71[VV1],DF71[VV2],DF71[VV7],DF71[VV8]],axis=1)
 
 # %%
-common=set(A).intersection(set(output3.loc[0].keys()))
+B=[]
+M1=[i for i in range(pos(output3,'1Votos'),pos(output3,'DIPDERECHA'))]
+M=list(output3.loc[0][M1].keys())
+for y in M:
+    if (output3[y] == 0).all():
+        B.append(y)
+
+# %%
+common=set(B).intersection(set(output3.loc[0].keys()))
 #salida sin ceros de asignaciones
 output4=output3.drop(columns=list(common),axis=1)
 
@@ -42,7 +64,16 @@ output4=output3.drop(columns=list(common),axis=1)
 output5=pd.concat([DF71[VV0],DF71[VV5],DF71[VV6],DF71[VV7],DF71[VV8]],axis=1)
 
 # %%
-common=set(A).intersection(set(output5.loc[0].keys()))
+U=[]
+U=VV5+VV7
+C=[]
+M=list(output5.loc[0][U].keys())
+for y in M:
+    if (output5[y] == 0).all():
+        C.append(y)
+
+# %%
+common=set(C).intersection(set(output5.loc[0].keys()))
 #salida sin ceros de >barrera
 output6=output5.drop(columns=list(common),axis=1)
 
@@ -73,8 +104,3 @@ if F=='Y' or F=='Y'.lower():
         results.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
 
-
-# %%
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")

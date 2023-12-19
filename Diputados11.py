@@ -49,9 +49,7 @@ try:
     df2 = pd.read_excel(party)
 except:
     print('no existe')
-df2.head()#df2 es la lista de partidos y grupos 
-
-
+ 
 # -
 
 #definimos función que permita conocer la estructura de un DataFrame. Es muy
@@ -375,6 +373,8 @@ for j in range (N_PROV):#provincias
 
 to_remove=list(set(l)-set(D))
 
+estructura(df3)
+
 U0=[i for i in range(0,pos(df3,'1Votos'))]
 UU0=list(df3.loc[0][U0].keys())
 U1=[i for i in range(pos(df3,'DERECHA'),pos(df3,'OTROS')+1)]
@@ -392,13 +392,6 @@ borrar=list(df3.loc[0][U].keys())
 
 df3=df3.drop(columns=borrar)
 
-A=[]
-M1=[i for i in range(pos(df3,'DIPUTADOS')+1,pos(df3,'VDERECHA'))]
-M=list(df3.loc[0][M1].keys())
-for y in M:
-    if (df3[y] == 0).all():
-        A.append(y)
-
 U0=[i for i in range(0,pos(df3,'DIPUTADOS')+1)]
 U1=[i for i in range(pos(df3,'1Votos'),pos(df3,'1Diputados'))]
 U2=[i for i in range(pos(df3,'VDERECHA'),pos(df3,'DDERECHA'))]
@@ -412,7 +405,20 @@ UU4=list(df3.loc[0][U4].keys())
 
 resultados=pd.concat([df3[UU0],df3[UU1],df3[UU2],df3[UU3],df3[UU4]], axis=1)
 
-df3.loc[0]['1Diputados']
+U=[]
+U=UU1+UU3
+A=[]
+M=list(resultados.loc[0][U].keys())
+for y in M:
+    if (resultados[y] == 0).all():
+        A.append(y)
+
+B=[]
+M1=[i for i in range(pos(df3,'1Votos'),pos(df3,'VDERECHA'))]
+M=list(df3.loc[0][M1].keys())
+for y in M:
+    if (df3[y] == 0).all():
+        B.append(y)
 
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
@@ -425,7 +431,7 @@ if F=='Y' or F=='Y'.lower():
         results=resultados.drop(columns=common,axis=1)
         writer = pd.ExcelWriter(Name+'.xlsx')
         results.to_excel(writer,sheet_name='DatosMint')
-        comi=set(A).intersection(set(masde.loc[0].keys()))
+        comi=set(B).intersection(set(masde.loc[0].keys()))
         masde1=masde.drop(columns=comi,axis=1)
         masde1.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()

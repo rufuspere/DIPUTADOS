@@ -13,30 +13,15 @@
 # ---
 
 # +
-#Diputados1
-
-# +
-#PARTE 0: ESTABLECER DIRECTORIO DE TRABAJO
+#DIPUTADOS1: PARTE I: IMPORTACIÓN DE DATOS
 # -
 
 guion="Diputados1"
 
-dire=input('Introducir directorio de trabajo: \n')
-
-import os
-os.chdir(dire)
-print('Directorio de trabajo: ',os.getcwd())
-
-import pickle
-w = open(dire+"\\dire.pkl","wb")
-pickle.dump(dire,w)
-w.close()
-import sys
-sys.path.append(dire)
-
 # +
 #importar datos de las elecciones. Son del Ministerio del Interior adaptados
-import pandas as pd
+import pandas as pd 
+import pickle
 import warnings
 #importar datos de las elecciones. Son del Ministerio del Interior adaptados
 while True:
@@ -64,9 +49,7 @@ try:
     df2 = pd.read_excel(party)
 except:
     print('no existe')
-df2.head()#df2 es la lista de partidos y grupos 
-
-
+ 
 # -
 
 #definimos función que permita conocer la estructura de un DataFrame. Es muy
@@ -105,8 +88,6 @@ party2=pd.DataFrame(party2)
 warnings.filterwarnings("ignore")
 df2=pd.concat([df2,pd.DataFrame(party2.T)],ignore_index=True).copy()
 
-
-df2.to_pickle(dire+'\partidos')
 
 #creamos dos variables para número de provincias y de partidos
 N_PROV=len(df0)
@@ -319,7 +300,7 @@ for j in range (N_PROV):#provincias
     for x in vot_grupos:#grupos de partidos
         print(x, f'{df3.loc[j][list_vgroups[x]].sum():,.0f}')
         S=S+df3.loc[j][list_vgroups[x]].sum()
-    print('--TOTAL VOTOS ',f'{S:,.0f}')
+    print('--TOTAL VOTOS ELECCIONES REALES',f'{S:,.0f}')
 
 #diputados por grupos por provincias
 for j in range (N_PROV):#provincias
@@ -328,7 +309,7 @@ for j in range (N_PROV):#provincias
     for x in dgrupos:#grupos de partidos
         print(x, f'{df3.loc[j][list_dgroups[x]].sum():,.0f}')
         S=S+df3.loc[j][list_dgroups[x]].sum()
-    print('--TOTAL DIPUTADOS ',f'{S:,.0f}')
+    print('--TOTAL DIPUTADOS ELECCIONES REALES',f'{S:,.0f}')
 
 results=df3.copy()
 
@@ -392,6 +373,8 @@ for j in range (N_PROV):#provincias
 
 to_remove=list(set(l)-set(D))
 
+estructura(df3)
+
 U0=[i for i in range(0,pos(df3,'1Votos'))]
 UU0=list(df3.loc[0][U0].keys())
 U1=[i for i in range(pos(df3,'DERECHA'),pos(df3,'OTROS')+1)]
@@ -409,13 +392,6 @@ borrar=list(df3.loc[0][U].keys())
 
 df3=df3.drop(columns=borrar)
 
-A=[]
-M1=[i for i in range(pos(df3,'DIPUTADOS')+1,pos(df3,'VDERECHA'))]
-M=list(df3.loc[0][M1].keys())
-for y in M:
-    if (df3[y] == 0).all():
-        A.append(y)
-
 U0=[i for i in range(0,pos(df3,'DIPUTADOS')+1)]
 U1=[i for i in range(pos(df3,'1Votos'),pos(df3,'1Diputados'))]
 U2=[i for i in range(pos(df3,'VDERECHA'),pos(df3,'DDERECHA'))]
@@ -429,6 +405,21 @@ UU4=list(df3.loc[0][U4].keys())
 
 resultados=pd.concat([df3[UU0],df3[UU1],df3[UU2],df3[UU3],df3[UU4]], axis=1)
 
+U=[]
+U=UU1+UU3
+A=[]
+M=list(resultados.loc[0][U].keys())
+for y in M:
+    if (resultados[y] == 0).all():
+        A.append(y)
+
+B=[]
+M1=[i for i in range(pos(df3,'1Votos'),pos(df3,'VDERECHA'))]
+M=list(df3.loc[0][M1].keys())
+for y in M:
+    if (df3[y] == 0).all():
+        B.append(y)
+
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
     Res=input("¿Qué nombre desea concatenar con 'Resultados'\n")
@@ -440,7 +431,7 @@ if F=='Y' or F=='Y'.lower():
         results=resultados.drop(columns=common,axis=1)
         writer = pd.ExcelWriter(Name+'.xlsx')
         results.to_excel(writer,sheet_name='DatosMint')
-        comi=set(A).intersection(set(masde.loc[0].keys()))
+        comi=set(B).intersection(set(masde.loc[0].keys()))
         masde1=masde.drop(columns=comi,axis=1)
         masde1.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
