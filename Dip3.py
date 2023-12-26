@@ -367,37 +367,38 @@ print("---------------------------------------------------",
      "---------------------------------------------------",
      "TERMINADO:",guion+".py")
 
-df12.loc[:]['DIPUTADOS']
+# +
+################################################################################################################################
+
+# +
+#PARTE III: ELIMINAR CANDIDATURAS <barrera
+# -
 
 guion="PARTE III"
 
 df3=df12.copy()
 
 
+df1.loc[:]['%1']
+
 l_barr=[[] for j in range(N_PROV)]
 for j in range (N_PROV):
     for x in l:
-        if df3.loc[j]['%'+x] < barrera:
+        if df1.loc[j]['%'+x] < barrera:
             df3.loc[j,x]=0
             l_barr[j].append(x)
-
-barrera<df3.loc[0]['%1']
+        else:
+            df3.loc[j,x]=df1.loc[j][x+'Votos']
 
 for j in range (N_PROV):#provincias
     Su=0
     for x in l:
-        if df3.loc[j]['%'+x] >= barrera:#partidos que superan la barrera
+        if df1.loc[j]['%'+x] >= barrera:#partidos que superan la barrera
             Su=Su+1
         df3.loc[j,'PARTIDOS>']=Su
 
 
 df3.loc[0,'PARTIDOS>']
-
-#anulo valores de votos <barrera
-for j in range (N_PROV):
-    for x in l_barr[j]:
-        if df3.loc[j]['%'+x] < barrera:
-            df3.loc[j,x]=0
 
 df3.insert(loc = 5,
           column = 'VOTOS_REPARTIR',
@@ -448,8 +449,6 @@ K=[[] for j in range(N_PROV)]
 for j in range(N_PROV):    
     K[j]=pd.DataFrame(Koef[j])  
     K[j].insert(loc=0, column='provincia', value=0, allow_duplicates = False)
-
-Koef
 
 dHondt=[[] for i in range(N_PROV)]
 for i in range(len(df3)):
@@ -873,6 +872,8 @@ print("---------------------------------------------------",
 
 guion="Diputados37"
 
+df5=df4.copy()
+
 #votos por grupo político
 df6=df5.copy()
 for k in range(N_PROV):
@@ -884,6 +885,8 @@ for k in range(N_PROV):
 for k in range(N_PROV):
     for x in dgrupos:
         df6.loc[k,x]=df6.loc[k][list_dgroups[x]].sum()
+
+df6.loc[:][list(list_dgroups)]
 
 df7=df6.copy()
 import warnings
@@ -902,6 +905,8 @@ for j in range(N_PROV):
 for j in range (N_PROV):#provincias
     for x in vot_grupos:#grupos de partidos
         df71.loc[j,x]=df71.loc[j][list_vgroups[x]].sum()
+
+DF71.loc[0]['VDERECHA']
 
 #grupos para diputados
 dipugrupos=['DIPDERECHA',
@@ -932,18 +937,24 @@ for j in range (N_PROV):#provincias
     for x in dipugrupos:#grupos de partidos
         df71.loc[j,x]=df71.loc[j][list_dipugroups[x]].sum()
 
-df71.loc[:]['PARTIDOS>']
+new_l
 
-#en caso de que los nuevos datos de diputados no se compadezcan 
-#con los del Ministerio del Interior (por haber cambiado el número
-#de diputados por cisircunscripción, p.e) anulamos los diputados.
+new_d
+
+Diputats = ['DIPUTADOS'+str(x) for x in list(df2.keys())]
+
+
+dipugrupos
+
+#en caso de que los nuevos datos de diputados no se compadezcan con los del Ministerio del Interior (por haber cambiado
+# el número de diputados por circunscripción, p.e) igualamos los diputados iniciales con los calculados.
 DF71=df71.copy()
-for j in range (N_PROV):
-    a=DF71.loc[j,dipugrupos].sum()!=DF71.loc[j,dgrupos].sum()
-    if a==True:
-        DF71.loc[j,dgrupos]=""
-        for x in new_d:
-            DF71.loc[j,x]=""
+for j in range (N_PROV):#provincias
+    for x in Diputats:
+        DF71.loc[j,re.sub('DIPUTADOS','',x)+'Diputados']=DF71.loc[j,x]
+for j in range (N_PROV):#provincias
+    for x in dipugrupos:
+        DF71.loc[j,'D'+re.sub('DIP','',x)]=DF71.loc[j,x]
 
 estructura(DF71)
 
