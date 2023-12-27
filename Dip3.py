@@ -886,6 +886,8 @@ for k in range(N_PROV):
     for x in dgrupos:
         df6.loc[k,x]=df6.loc[k][list_dgroups[x]].sum()
 
+df6.loc[:][list(list_dgroups)]
+
 df7=df6.copy()
 import warnings
 warnings.filterwarnings("ignore")
@@ -902,9 +904,9 @@ for j in range(N_PROV):
 
 for j in range (N_PROV):#provincias
     for x in vot_grupos:#grupos de partidos
-        df7.loc[j,x]=df7.loc[j][list_vgroups[x]].sum()
+        df71.loc[j,x]=df71.loc[j][list_vgroups[x]].sum()
 
-df7.loc[0]['VDERECHA']
+DF71.loc[0]['VDERECHA']
 
 #grupos para diputados
 dipugrupos=['DIPDERECHA',
@@ -942,7 +944,7 @@ new_d
 Diputats = ['DIPUTADOS'+str(x) for x in list(df2.keys())]
 
 
-Diputats
+dipugrupos
 
 #en caso de que los nuevos datos de diputados no se compadezcan con los del Ministerio del Interior (por haber cambiado
 # el número de diputados por circunscripción, p.e) igualamos los diputados iniciales con los calculados.
@@ -957,13 +959,13 @@ for j in range (N_PROV):#provincias
 estructura(DF71)
 
 V0=[i for i in range(0,pos(DF71,'DIPUTADOS')+1)]
-V1=[i for i in range(pos(DF71,'1Votos'),pos(DF71,'VDERECHA'))]
-V2=[i for i in range(pos(DF71,'VDERECHA'),pos(DF71,'1'))]
-V3=[i for i in range(pos(DF71,'1Diputados'),pos(DF71,'DDERECHA'))]
+V1=[i for i in range(pos(DF71,'1Votos'),pos(DF71,'1'))]
+V2=[i for i in range(pos(DF71,'VDERECHA'),pos(DF71,'VOTROS')+1)]
+V3=[i for i in range(pos(DF71,'1Diputados'),pos(DF71,'%1'))]
 V4=[i for i in range(pos(DF71,'DDERECHA'),pos(DF71,'DIPUTADOS1'))]
-V5=[i for i in range(pos(DF71,'1'),pos(DF71,'DERECHA'))]
-V6=[i for i in range(pos(DF71,'DERECHA'),pos(DF71,'1Diputados'))]
-V7=[i for i in range(pos(DF71,'DIPUTADOS1'),pos(DF71,'DIPDERECHA'))]
+V5=[i for i in range(pos(DF71,'1'),pos(DF71,'1Diputados'))]
+V6=[i for i in range(pos(DF71,'DERECHA'),pos(DF71,'DIPDERECHA'))]
+V7=[i for i in range(pos(DF71,'DIPUTADOS1'),pos(DF71,'DERECHA'))]
 V8=[i for i in range(pos(DF71,'DIPDERECHA'),pos(DF71,'DIPOTROS')+1)]
 
 
@@ -993,33 +995,21 @@ print("---------------------------------------------------",
      "TERMINADO:",guion+".py")
 
 # +
-#################################################################
+#PARTE VIII: ARCHIVO DE SALIDA EXCEL
 
 # +
-#PARTE VIII: ARCHIVO DE SALIDA EXCEL
+#################################################################
 # -
 
 guion="PARTE VIII"
 
 estructura(minint)
 
-U=[x for x in minint.loc[0].keys()[list(minint.keys()).index('1Votos'):] ]
-
-#Columnas con cero diputados
-A=[]
-for y in U:
-    if (minint[y] == 0).all():
-        A.append(y)
-
-A
-
-output1=minint.copy()
+output1=resultados.copy()
 
 common=set(A).intersection(set(output1.loc[0].keys()))
 #salida sin ceros
 output2=output1.drop(columns=list(common),axis=1)
-
-estructura(output2)
 
 #salida con ceros de asignaciones
 output3=pd.concat([DF71[VV0],DF71[VV1],DF71[VV2],DF71[VV7],DF71[VV8]],axis=1)
@@ -1033,6 +1023,10 @@ for y in M:
     if (output3[y] == 0).all():
         B.append(y)
 
+M
+
+list(output1.loc[0].keys())
+
 common=set(B).intersection(set(output3.loc[0].keys()))
 #salida sin ceros de asignaciones
 output4=output3.drop(columns=list(common),axis=1)
@@ -1040,10 +1034,12 @@ output4=output3.drop(columns=list(common),axis=1)
 #salida de >barrera con ceros
 output5=pd.concat([DF71[VV0],DF71[VV5],DF71[VV6],DF71[VV7],DF71[VV8]],axis=1)
 
-X=[]
-X=VV5+VV7
+U
+
+U=[]
+U=VV5+VV7
 C=[]
-M=list(output5.loc[0][X].keys())
+M=list(output5.loc[0][U].keys())
 for y in M:
     if (output5[y] == 0).all():
         C.append(y)

@@ -34,6 +34,9 @@ d.close()
 e=open(dire+"\\new_d.pkl","rb")
 new_d=pickle.load(e)
 e.close()
+z=open(dire+"\\l.pkl","rb")
+l=pickle.load(z)
+z.close()
 
 # %%
 
@@ -57,9 +60,12 @@ list_dgroups=pickle.load(w)
 w.close()
 df0=pd.read_pickle(dire+"\\df0.pkl")
 df2=pd.read_pickle(dire+"\\df2.pkl")
-dfd=pd.read_pickle(dire+"\\dfd.pkl")
 dfprov=pd.read_pickle(dire+"\\dfprov.pkl")
+minint=pd.read_pickle(dire+"\\minint.pkl")
 
+
+# %%
+minint
 
 
 # %%
@@ -190,6 +196,4 @@ def lista_partidos():
     for i in range(0,len(df2.loc[0].keys())):
         print ('Nº Partido:',K[i][0],'\n','Siglas:',K[i][1],'; Orientación:',K[i][2])
 
-
 # %%
-lista_partidos()

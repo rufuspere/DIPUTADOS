@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -14,8 +14,11 @@
 # ---
 
 # %%
-#Eleccion2: importa funciones que pueden ser útiles para analizar 
+#DIPUTADOS2: importa funciones que pueden ser útiles para analizar 
 #resultados
+
+# %%
+guion="Diputados2"
 
 # %%
 import funciones as aux
@@ -41,5 +44,11 @@ raise SystemExit("El programa se detiene aquí pero puede llamar a las funciones
 # %%
 aux.lista_partidos()
 
+
 # %%
 aux.Votos_y_Escaños_Grupos()
+
+# %%
+aux.minint
+
+# %%
