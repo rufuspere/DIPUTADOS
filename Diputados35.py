@@ -1,25 +1,24 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: py:hydrogen
 #     text_representation:
 #       extension: .py
-#       format_name: hydrogen
-#       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       format_name: light
+#       format_version: '1.5'
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
-# %%
-#DIPUTADOS35:PARTE V: COMPROBAR SI HAY EMPATES
+# +
+#Dip35. PARTE V: COMPROBAR SI HAY EMPATES
+# -
 
-# %%
 guion="Diputados35"
 
-# %%
+# +
 #vemos la lista de los valores repetidos en cada provincia:  repitentes[I] extaídos de lista_votos[I]
 repitentes=[[] for i in range(N_PROV) ]
 S=0
@@ -44,8 +43,10 @@ if S==0:
 else:
     print('Hay candidaturas empatadas en provincias',set(PR))
     Empates=1
+# -
 
-# %%
 print("---------------------------------------------------",
      "---------------------------------------------------",
      "TERMINADO:",guion+".py")
+
+

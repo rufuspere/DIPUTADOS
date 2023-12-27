@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -35,7 +35,7 @@ for script in listScripts:
 # -
 
 #PARTE II: funciones de análisis y su importacoón para comprobaciones
-listScripts=["funciones.py","Diputados2.py"]
+listScripts=["funciones.py","Diputados21.py"]
 for script in listScripts:
     with open(script,encoding="utf-8") as f:
         contents = f.read()
@@ -64,21 +64,18 @@ for script in listScripts:
     exec(contents)
 
 # +
-#################################################################
+###################################################################
 # -
 
-#PARTE III: ELIMINAR DE NUEVO CANDIDATURAS <barrera
-#comienza copiando df3=df1.copy()
+#PARTE III: ELIMINAR CANDIDATURAS <barrera
 listScripts=["Diputados33.py"]
 for script in listScripts:
     with open(script,encoding="utf-8") as f:
         contents = f.read()
     exec(contents)
 
-estructura(df3)
-
 # +
-##############################################################
+###################################################################
 # -
 
 #PARTE IV: TABLAS d'HONDT
@@ -131,19 +128,6 @@ for script in listScripts:
 #############################################################3
 # -
 
-for i in range(len(df3)):
-    print('-PROVINCIA',i,'(',df1.loc[i]['PROVINCIA'].strip(),')','\n --DIPUTADOS:')
-    print('   DERECHA',DF72.loc[i]['DIPDERECHA'])
-    print('   IZQUIERDA',DF72.loc[i]['DIPIZQUIERDA'])
-    print('   CENTRO',DF72.loc[i]['DIPCENTRO'])
-    print('   NACIONALISTAS',DF72.loc[i]['DIPNACIONALISTAS'])
-    print('   OTROS',DF72.loc[i]['DIPOTROS'])
-    print('  --TOTAL',DF72.loc[i][dipugrupos].sum(),'DIPUTADOS')
-
-# +
-##############################################################
-# -
-
 #PARTE VIII: ARCHIVO DE SALIDA EXCEL
 #recibe df5 y lo transforma en df6,df7,df71,DF71 y sale DF72
 listScripts=["Diputados38.py"]
@@ -152,5 +136,6 @@ for script in listScripts:
         contents = f.read()
 
 
-# +
-###################################################################
+print("---------------------------------------------------",
+     "---------------------------------------------------",
+     "TERMINADO: TODO")

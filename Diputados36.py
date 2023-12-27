@@ -1,25 +1,23 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       format_name: light
+#       format_version: '1.5'
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
-# %%
-#Diputados36: PARTE VI: SI HAY EMPATES
+# +
+#Dip36. PARTE VI: SI HAY EMPATES
+# -
 
-# %%
 guion="Diputados36"
 
-# %%
 repeated=[[] for i in range(N_PROV)]
 for i in range(N_PROV):
     my_set = {s for s in repitentes[i]}
@@ -27,10 +25,6 @@ for i in range(N_PROV):
     repeated[i].sort(reverse=True)
 #valores repetidos en cada provincia en la tabla d'Hondt (un solo valor)
 
-# %%
-repeated[7]
-
-# %%
 #defino función que identifica y recopila valores repetidos
 from collections import defaultdict
 def list_duplicates(seq):
@@ -42,7 +36,7 @@ def list_duplicates(seq):
 #en que aparece
 
 
-# %%
+# +
 repeat_loc=[[] for i in range(N_PROV)]
 for i in range(N_PROV):
     for dup in list_duplicates(lista_votos[i]):
@@ -51,11 +45,8 @@ for i in range(N_PROV):
         
 #tuplas que asocian key=VALOR repetido con value lista de los ÍNDICES de lista_votos[I]
 #en la mayoría de casos es 0 el único valor que se repite
+# -
 
-# %%
-repeat_loc[7]
-
-# %%
 for i in range(N_PROV):
     for j in range (len(repeat_loc[i])):
         a=min([x for x in repeat_loc[i][j][1]])
@@ -68,7 +59,6 @@ for i in range(N_PROV):
             print('Mínimo',a,'; Índice',c,'; Máximo',b)
          #   print(i,df3.loc[i]['PROVINCIA'].strip(),j,b>=df3.loc[i]['DIPUTADOS'] and a<=df3.loc[i]['DIPUTADOS'])
 
-# %%
 #devuelve el rango de las posiciones de lista_votos en que se repite el valor que ha de ser asignado
 #a un partido aleatoriamente ya que el coeficiente de d'Hondt es el mismo para varios partidos.
 locations=[[] for i in range(N_PROV)]
@@ -88,10 +78,6 @@ for i in range(N_PROV):
 #el número de diputados de la provincia
 
 
-# %%
-locations[2]
-
-# %%
 if not any(locations):
     print("locations está vacío")
 else:
@@ -103,7 +89,7 @@ else:
 #donde no está vacía muestra el rango [MIN,MAX] en el que se encuentran los coeficientes empatados y
 #el intervalo siempre ha de cubrir el valor del número de diputados asignados a la provincia.
 
-# %%
+# +
 #el número de veces que se ha de elegir al azar en cada provincia
 n_rep=[]
 pr_alea=[]#provincias donde hacer sorteo
@@ -120,13 +106,10 @@ s=[(i,df3.loc[i]['PROVINCIA'].strip()) for i in range(N_PROV)]
 n_rep1=list(zip(s,n_rep))       
 #n_rep1 asocia para cada provincia el número de veces a elegir al azar
 
-# %%
-pr_alea
-
-# %%
+# +
 #comprobación del muestreo
+# -
 
-# %%
 import random
 M=[[] for o in range(N_PROV)]
 for o in range(N_PROV):
@@ -138,7 +121,6 @@ for o in range(N_PROV):
         continue
 
 
-# %%
 #función que valora la frecuencia de cada partido en el sorteo
 def suerte(provincia,veces):
     N=[[] for o in range(N_PROV)]
@@ -155,10 +137,6 @@ def suerte(provincia,veces):
     return('Porcentaje de cada valor del indice:',100*(cuenta['alea'].value_counts())/veces)
 
 
-# %%
-suerte(7,1000)
-
-# %%
 #provincias con y sin duplicados
 S1=0
 S2=0
@@ -176,7 +154,6 @@ for i in range(N_PROV):
 print('\n','NÚMERO DE PROVINCIAS SIN DUPLICADOS',S1,'\n','NÚMERO DE PROVINCIAS CON DUPLICADOS',S2)
 
 
-# %%
 #función que cuenta el número de diputados que cada partido obtiene en función del orden en tabla dHondt
 def CountFrequency(my_list):
     count = {}
@@ -185,25 +162,15 @@ def CountFrequency(my_list):
     return count
 
 
-# %%
 import numpy as np
 #es la función que localiza valores en DataFrame
 i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),34693))
 indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
 print('Indices',indices)
 
-# %%
 i,j
 #devuelve una tupla
 
-# %%
-M=np.array(dHondt[0],dtype=float)
-i,j=np.where(np.isclose(M,104079))
-
-# %%
-i,j
-
-# %%
 #provincias sin sorteo
 dipus=[[] for k in range(N_PROV)]
 num_part=[]
@@ -224,19 +191,14 @@ for k in range(N_PROV):
         elements_count[k].append(a)
     num_part.append(elements_count[k])
 
-# %%
-dipus[2]
-
-# %%
 #lista de candidaturas que recibirán diputados sin muestreo 
 #ordenadas según la regla d'Hondt
 S=0
 for i in range (N_PROV):
     S=S+1
-    print(df3.loc[i]['PROVINCIA'],dipus[i])
+    print(df3.loc[i]['PROVINCIA'],dipus[i],len(dipus[i]))
 print(S)
 
-# %%
 l=[]
 for item in df2:
     l.append(str(item))
@@ -245,15 +207,10 @@ for x in l:
     columna='DIPUTADOS'+x
     Dl.append(columna)
 
-# %%
-Dl
-
-# %%
 for j in range(N_PROV):
     for x in Dl:
         df3.loc[j,x]=0
 
-# %%
 #corrijo los dHondt para que coincidan los índices con el número de partido
 pretty_dict=[[] for x in range(N_PROV)]
 indhondt=[[] for x in range(N_PROV)]
@@ -270,10 +227,6 @@ for j in range(N_PROV):
         continue
 
 
-# %%
-pretty_dict[2] 
-
-# %%
 #Asigno diputados a provincias donde no hay empates
 df4=df3.copy()
 P=[[] for k in range(N_PROV)]
@@ -285,10 +238,6 @@ for k in range(N_PROV):
         for x in P[k]:
             df4.loc[k,x]=pretty_dict[k][int(x[9:])]
 
-# %%
-df4['DIPUTADOS3']
-
-# %%
 #lista de provincias sin empates
 nemp=[]
 for k in range(N_PROV):
@@ -301,13 +250,6 @@ for k in range(N_PROV):
         emp.append(df1.loc[k]['PROVINCIA'].strip())
 
 
-# %%
-emp
-
-# %%
-nemp
-
-# %%
 #provincias con empates
 dipus1=[[] for k in range(N_PROV)]
 elements_count1=[[] for k in range(N_PROV)]
@@ -336,7 +278,6 @@ for k in range(N_PROV):
 #elegir entre una de las dos tuplas.
 
 
-# %%
 #asignación por sorteo
 dipus4=[[] for k in range(N_PROV)]
 for k in range(N_PROV):
@@ -355,12 +296,6 @@ for k in range(N_PROV):
 # 4 escaños para el partido de índice 2, 2 escaños para el 
 #de índice 3 y 1 escaño para el partido 1.
 
-
-
-# %%
-dipus4[0]
-
-# %%
 elements_count1=[[] for k in range(N_PROV)]
 for k in pr_alea:
     a=CountFrequency(dipus4[k])
@@ -368,7 +303,6 @@ for k in pr_alea:
     print(k,elements_count1[k][0])
 # el diccionario elements1_count[k] nos da el par (PARTIDO, ESCAÑOS) para cada PROVINCIA k
 
-# %%
 #corrijo los dHondt para que coincidan los índices con el número de partido
 New_pretty_dict=[[] for x in range(N_PROV)]
 New_indhondt=[[] for x in range(N_PROV)]
@@ -385,28 +319,8 @@ for j in range(N_PROV):
         continue
 
 
-# %%
-New_pretty_dict[7]
-
-# %%
-#Asigno diputados a provincias donde hay empates
-df5=df4.copy()
-for k in pr_alea:
-    for x in l:
-        columna='DIPUTADOS'+x
-        try:
-            df5.loc[k,columna]=( New_pretty_dict[k][int(x)])
-            #print('PROV ',k,'PARTIDO',int(x),'DIPUS ', elements_count[k][0][int(x)])
-        except:
-            continue
-df5 = df5.fillna(0)
-
-# %%
-df5.loc[5]['DIPUTADOS3']
-
-# %%
 print("---------------------------------------------------",
      "---------------------------------------------------",
      "TERMINADO:",guion+".py")
 
-# %%
+

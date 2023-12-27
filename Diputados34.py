@@ -14,6 +14,7 @@
 
 # +
 #DIPUTADOS34: PARTE IV: TABLAS d'HONDT
+#Usa df2 y df3
 # -
 
 guion="Diputados34"
@@ -28,9 +29,6 @@ for j in range(N_PROV):
     for x in claves:
         if(df3.loc[j][x])!=0:
             no_nulos[j].append(x)    
-
-#partidos que superan el mínimo de votos (barrera) en provincia 30
-no_nulos
 
 Koef=[[] for j in range(N_PROV)]
 for j in range(N_PROV):
@@ -51,8 +49,6 @@ K=[[] for j in range(N_PROV)]
 for j in range(N_PROV):    
     K[j]=pd.DataFrame(Koef[j])  
     K[j].insert(loc=0, column='provincia', value=0, allow_duplicates = False)
-
-Koef
 
 dHondt=[[] for i in range(N_PROV)]
 for i in range(len(df3)):
@@ -87,11 +83,12 @@ for i in range(N_PROV):
 #Exporto d'Hondt 
 F=input("¿DESEA EXPORTAR LAS TABLAS d'HONDT? (Y/N)")
 if F=='Y' or F=='Y'.lower():
+    suffix=input('¿Qué sufijo quire añadir al índice de provincia?')
     for i in range(N_PROV):
         A=dHondt[i] 
         B=pd.DataFrame(lista_votos[i])
         B[B>0].dropna(axis=0, how='all') 
-        Name='dHondt'+str(i)
+        Name='dHondt'+str(i)+suffix
         writer = pd.ExcelWriter(Name+'.xlsx')
         A.to_excel(writer,'dHondt')
         B.to_excel(writer,'lista_votos')
