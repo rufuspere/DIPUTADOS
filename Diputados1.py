@@ -1,24 +1,37 @@
 # ---
 # jupyter:
 #   jupytext:
+#     formats: py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
-# +
-#DIPUTADOS1: PARTE I: IMPORTACIÓN DE DATOS
-# -
+# %%
+#DIPUTADOS1
 
+# %%
+dire=input('Introducir directorio de trabajo: \n')
+
+# %%
+import os
+os.chdir(dire)
+print('Directorio de trabajo: ',os.getcwd())
+
+
+# %%
+#PARTE I: IMPORTACIÓN DE DATOS
+
+# %%
 guion="Diputados1"
 
-# +
+# %%
 #importar datos de las elecciones. Son del Ministerio del Interior adaptados
 import pandas as pd 
 import pickle
@@ -38,7 +51,7 @@ while True:
 df0.head()#df0 es el resultado de las elecciones 
 
 
-# +
+# %%
 # importar partidos por grupo
 parties=input ('introduce el nombre del fichero de partidos: ')
 year=input('y el año: ')
@@ -49,9 +62,9 @@ try:
     df2 = pd.read_excel(party)
 except:
     print('no existe')
- 
-# -
 
+
+# %%
 #definimos función que permita conocer la estructura de un DataFrame. Es muy
 #necesario para construir Data Frames.
 def estructura(my_Frame):
@@ -68,33 +81,39 @@ def estructura(my_Frame):
     return col_list
 
 
+# %%
 #defino función que encuentra posición de columna en df
 def pos(df,col):
     return(list(df.keys()).index(col))
 
 
+# %%
 #genero la lista de claves de partidos
 l=[]
 for item in df2:
     l.append(str(item))
 
+# %%
 party1=set(df2.loc[1])
 grupos=list(party1)
 party2=pd.Series(df2.columns.values,index=df2.columns.values)
 party2=pd.DataFrame(party2)
 
 
+# %%
 #añado a cada partido un número de identificación que será el usado en adelante
 warnings.filterwarnings("ignore")
 df2=pd.concat([df2,pd.DataFrame(party2.T)],ignore_index=True).copy()
 
 
+# %%
 #creamos dos variables para número de provincias y de partidos
 N_PROV=len(df0)
 N_PARTIDOS=len(df2.T)
 print(N_PROV,N_PARTIDOS)
 
 
+# %%
 #renombramos algunas columnas
 df0.rename(columns={'Nombre de Comunidad':'COMUNIDAD','Código de Provincia': 'NPROVINCIA',
 'Nombre de Provincia':'PROVINCIA','Total censo electoral': 'CENSO_ELECTORAL',
@@ -105,6 +124,7 @@ df0.rename(columns={'Nombre de Comunidad':'COMUNIDAD','Código de Provincia': 'N
 inplace=True )
 
 
+# %%
 df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
 if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
     print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
@@ -112,12 +132,14 @@ else:
     print ('¡OK!\n')
     print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
 
+# %%
 #inserto participación por provincia
 df0.insert(loc = pos(df0,"VOTOS A CANDIDATURAS"),
           column = '%PARTICIPACIÓN',
           value =df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
 
 
+# %%
 df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']
 if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
     print ('¡ERROR!',df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL'])
@@ -125,6 +147,7 @@ else:
     print ('¡OK!\n')
     print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
 
+# %%
 W1=[]#datos de provincia y votos de cada partidos
 W2=[]#escaños de cada partido
 for i in range(0,list(df0.keys()).index("1Votos")):
@@ -136,6 +159,7 @@ for i in range(0,len(df0.keys())):
     if ('Diputados' in df0.loc[0].keys()[i]):
         W2.append(df0.loc[0].keys()[i])
 
+# %%
 Y=[]#nombres de columnas con los votos a cada partido
 leng=len(W1)
 for x in range(0,leng):
@@ -143,70 +167,83 @@ for x in range(0,leng):
         Y.append(W1[x])
 
 
+# %%
 Z=[]#nombres de columnas con los diputados a cada partido
 for x in range(0,len(W2)):
     if ('Diputados' in W2[x]):
         Z.append(W2[x])
 
+# %%
 new_l=Y
 
+# %%
 new_d=Z
 
+# %%
 dfaux0=df0[W1]#datos censales y resumidos por provincia
 
 
+# %%
 dfaux1=df0[W2[0:]]
 
-# +
+# %%
 #df1
 
 df1=pd.concat([dfaux0,dfaux1], axis=1)
-# -
 
+# %%
 estructura(df1)
 
+# %%
 a1=pos(df1,'Número de mesas')
 
+# %%
 a2=pos(df1,'Censo electoral sin CERA')
 
+# %%
 a3=pos(df1,'Censo CERA')
 
-# +
+# %%
 #eliminamos ciertas columnas innecesarias (a1=Número de mesas, a3=Censo CERA,...)
 #para obtener df1
 
 df1 = df1.drop(df1.columns[[ a1,a2,a3]], axis=1)
-# -
 
 
+# %%
 print('La barrera electoral es \n 0.03 para el Congreso\n 0.05 para las eleciones en la CAM y\n 0 para el Europarlamento')
 
+# %%
 barrera=input('barrera electoral (<1)')
 barrera=float(barrera)
 
+# %%
 #inserto número de partidos
 df1.insert(loc = pos(df1,'CENSO_ELECTORAL'),
           column = 'NPARTIDOS',
           value =N_PARTIDOS)
 
 
+# %%
 #partidos con más votos que la barrera electoral
 df1.insert(loc = pos(df1,'CENSO_ELECTORAL'),
           column ='PARTIDOS>' ,
           value =0)
 
 
+# %%
 for x in l:
     columna='%'+x
     df1[columna]=df1[x+'Votos']/df1['VOTOS_VÁLIDOS']
 
 
-# +
+# %%
 #PARTE II: INTRODUCIR GRUPOS
-# -
 
+# %%
 df3=df1.copy()
 
+# %%
 #agrupaciones para votos registrados
 vot_grupos=['VDERECHA',
 'VCENTRO',
@@ -214,6 +251,7 @@ vot_grupos=['VDERECHA',
 'VNACIONALISTAS',
 'VOTROS']
 
+# %%
 import re
 #asignar a cada grupo sus partidos para votos
 B=vot_grupos
@@ -227,6 +265,7 @@ for x in vot_grupos:#nombres de los grupos (CENTRO, DERECHA,...)
     list_vgroups[x]=C
 
 
+# %%
 #grupos para votos > barrera electoral
 grupos=['DERECHA',
 'CENTRO',
@@ -234,6 +273,7 @@ grupos=['DERECHA',
 'NACIONALISTAS',
 'OTROS']
 
+# %%
 #grupos para votos> barrera electoral
 import re
 list_groups = {key: None for key in grupos}
@@ -246,6 +286,7 @@ for x in grupos:#nombres de los grupos (CENTRO, DERECHA,...)
     #print(x,C)
     list_groups[x]=C
 
+# %%
 #grupos para diputados
 dgrupos=['DDERECHA',
 'DCENTRO',
@@ -253,6 +294,7 @@ dgrupos=['DDERECHA',
 'DNACIONALISTAS',
 'DOTROS']
 
+# %%
 #asignar a cada grupo sus partidos para escaños
 list_dgroups = {key: None for key in dgrupos}
 for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
@@ -264,7 +306,7 @@ for x in dgrupos:#nombres de los grupos (CENTRO, DERECHA,...)
     #print(x,C)
     list_dgroups[x]=C
 
-# +
+# %%
 for j in range (N_PROV):
     for x in l:
         columna='%'+x 
@@ -275,24 +317,27 @@ for j in range (N_PROV):
             
        
     
-# -
 
+# %%
 for j in range (N_PROV):#provincias
     for x in vot_grupos:#grupos de partidos
         df3.loc[j,x]=df3.loc[j][list_vgroups[x]].sum()
 
+# %%
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     S=0
     for x in dgrupos:#grupos de partidos
         df3.loc[j,x]=df3.loc[j][list_dgroups[x]].sum()
 
+# %%
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     S=0
     for x in grupos:#grupos de partidos
         df3.loc[j,x]=df3.loc[j][list_groups[x]].sum()
 
+# %%
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
     print('\n','PROVINCIA',df3.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
@@ -302,6 +347,7 @@ for j in range (N_PROV):#provincias
         S=S+df3.loc[j][list_vgroups[x]].sum()
     print('--TOTAL VOTOS ELECCIONES REALES',f'{S:,.0f}')
 
+# %%
 #diputados por grupos por provincias
 for j in range (N_PROV):#provincias
     print('\n','PROVINCIA',df3.loc[j]['PROVINCIA'].strip(),f'{j:,.0f}','\n')
@@ -311,15 +357,17 @@ for j in range (N_PROV):#provincias
         S=S+df3.loc[j][list_dgroups[x]].sum()
     print('--TOTAL DIPUTADOS ELECCIONES REALES',f'{S:,.0f}')
 
+# %%
 results=df3.copy()
 
-# +
+# %%
 #PARTE III: ARCHIVO DE SALIDA EXCEL
-# -
 
+# %%
 percent=list(results.loc[0][:].keys()[pos(df3,"%1"):pos(df3,'VDERECHA')])
 
 
+# %%
 #chequeos
 #suma de votos igual a votos a candidaturas
 for j in range (N_PROV):#provincias
@@ -334,6 +382,7 @@ for j in range (N_PROV):#provincias
     print('--TOTAL VOTOS',f'{S:,.0f}','\n','--VOTOS A CANDIDATURAS',
          f'{a:,.0f}','\n','--VOTOS A GRUPOS',f'{S1:,.0f}')
 
+# %%
 #chequeos
 #suma de diputados igual número de diputados y suma por grupos
 for j in range (N_PROV):#provincias
@@ -348,7 +397,7 @@ for j in range (N_PROV):#provincias
     print('--CENSO ELECTORAL',f'{a:,.0f}','\n','--TOTAL VOTOS',f'{S1:,.0f}','\n','--DIPUTADOS A CANDIDATURAS',
          f'{S:,.0f}')
 
-# +
+# %%
 D=[]
 for y in l:
     
@@ -358,12 +407,13 @@ for y in l:
         
 D=list(set(D))
 D.sort()#partidos que superan la barrera
-# -
 
+# %%
 for x in range(0,len(D)):
     D[x]=str(D[x])
 
 
+# %%
 for j in range (N_PROV):#provincias
     Su=0
     for x in D:#partidos que superan la barrera
@@ -371,10 +421,13 @@ for j in range (N_PROV):#provincias
             Su=Su+1
     df3.loc[j,'PARTIDOS>']=Su
 
+# %%
 to_remove=list(set(l)-set(D))
 
+# %%
 estructura(df3)
 
+# %%
 U0=[i for i in range(0,pos(df3,'1Votos'))]
 UU0=list(df3.loc[0][U0].keys())
 U1=[i for i in range(pos(df3,'DERECHA'),pos(df3,'OTROS')+1)]
@@ -385,13 +438,17 @@ U3=[i for i in range(pos(df3,'DDERECHA'),pos(df3,'DOTROS')+1)]
 UU3=list(df3.loc[0][U3].keys())
 UU=UU0+UU1+UU2+UU3
 
+# %%
 masde=pd.concat([df3[UU0],df3[l],df3[UU1],df3[UU2],df3[UU3]],axis=1)
 
+# %%
 U=[i for i in range(pos(df3,'%1'),pos(df3,'1'))]
 borrar=list(df3.loc[0][U].keys())
 
+# %%
 df3=df3.drop(columns=borrar)
 
+# %%
 U0=[i for i in range(0,pos(df3,'DIPUTADOS')+1)]
 U1=[i for i in range(pos(df3,'1Votos'),pos(df3,'1Diputados'))]
 U2=[i for i in range(pos(df3,'VDERECHA'),pos(df3,'DDERECHA'))]
@@ -403,8 +460,10 @@ UU2=list(df3.loc[0][U2].keys())
 UU3=list(df3.loc[0][U3].keys())
 UU4=list(df3.loc[0][U4].keys())
 
+# %%
 resultados=pd.concat([df3[UU0],df3[UU1],df3[UU2],df3[UU3],df3[UU4]], axis=1)
 
+# %%
 U=[]
 U=UU1+UU3
 A=[]
@@ -413,6 +472,7 @@ for y in M:
     if (resultados[y] == 0).all():
         A.append(y)
 
+# %%
 B=[]
 M1=[i for i in range(pos(df3,'1Votos'),pos(df3,'VDERECHA'))]
 M=list(df3.loc[0][M1].keys())
@@ -420,6 +480,7 @@ for y in M:
     if (df3[y] == 0).all():
         B.append(y)
 
+# %%
 F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
 if F=='Y' or F=='Y'.lower():
     Res=input("¿Qué nombre desea concatenar con 'Resultados'\n")
@@ -442,10 +503,10 @@ if F=='Y' or F=='Y'.lower():
         writer.close()
 
 
-# +
+# %%
 #PARTE IV: GUARDAR FICHEROS DE INTERÉS
 
-# +
+# %%
 #creo un diccionario inverso
 b=[x[1:] for x in (vot_grupos)]
 party_grupo={}
@@ -462,7 +523,7 @@ for j in range(len(b)):
 
 
 
-# +
+# %%
 # lista de comunidades
 CA1=list(set(df0['COMUNIDAD']))
 
@@ -481,18 +542,17 @@ for y in CA1:
     CA[y]=U
 
 
-# -
-
-
+# %%
 # provincias
 dfprov=df0.loc[:][['NPROVINCIA','PROVINCIA']]
 
+# %%
 #exporto ficheros de interés
 df0.to_pickle(dire+"\\df0.pkl")
 df1.to_pickle(dire+"\\df1.pkl")
 df2.to_pickle(dire+"\\df2.pkl")
 dfprov.to_pickle(dire+"\\dfprov.pkl")
-resultados.to_pickle((dire+"\\resultados.pkl"))
+resultados.to_pickle(dire+"\\minint.pkl")
 variables={}
 variables['N_PROV']=N_PROV
 variables['N_PARTIDOS']=N_PARTIDOS
@@ -530,6 +590,9 @@ z=open(dire+"\\l.pkl","wb")
 pickle.dump(l,z)
 z.close()
 
+# %%
 print("---------------------------------------------------",
      "---------------------------------------------------",
      "TERMINADO:",guion+".py")
+
+# %%

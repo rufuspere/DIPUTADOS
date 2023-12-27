@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -44,15 +44,11 @@ raise SystemExit("El programa se detiene aquí pero puede llamar a las funciones
 # %%
 aux.lista_partidos()
 
+
 # %%
 aux.Votos_y_Escaños_Grupos()
 
 # %%
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
-
-# %%
-l
+aux.minint
 
 # %%
