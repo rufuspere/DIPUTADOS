@@ -128,20 +128,7 @@ for script in listScripts:
     exec(contents)
 
 # +
-#############################################################3
-# -
-
-for i in range(len(df3)):
-    print('-PROVINCIA',i,'(',df1.loc[i]['PROVINCIA'].strip(),')','\n --DIPUTADOS:')
-    print('   DERECHA',DF72.loc[i]['DIPDERECHA'])
-    print('   IZQUIERDA',DF72.loc[i]['DIPIZQUIERDA'])
-    print('   CENTRO',DF72.loc[i]['DIPCENTRO'])
-    print('   NACIONALISTAS',DF72.loc[i]['DIPNACIONALISTAS'])
-    print('   OTROS',DF72.loc[i]['DIPOTROS'])
-    print('  --TOTAL',DF72.loc[i][dipugrupos].sum(),'DIPUTADOS')
-
-# +
-##############################################################
+#######################################################################
 # -
 
 #PARTE VIII: ARCHIVO DE SALIDA EXCEL
@@ -150,7 +137,5 @@ listScripts=["Diputados38.py"]
 for script in listScripts:
     with open(script,encoding="utf-8") as f:
         contents = f.read()
+    exec(contents)
 
-
-# +
-###################################################################

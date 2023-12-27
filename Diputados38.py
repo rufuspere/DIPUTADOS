@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -22,12 +22,6 @@ guion="Diputados38"
 # %%
 #salida con ceros de datos MinInt
 output1=resultados.copy()
-
-# %%
-estructura(output1)
-
-# %%
-list(output1.loc[0].keys())
 
 # %%
 A=[]
