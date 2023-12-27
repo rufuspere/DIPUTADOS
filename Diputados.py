@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -35,7 +35,7 @@ for script in listScripts:
 # -
 
 #PARTE II: funciones de análisis y su importacoón para comprobaciones
-listScripts=["funciones.py","Diputados2.py"]
+listScripts=["funciones.py","Diputados21.py"]
 for script in listScripts:
     with open(script,encoding="utf-8") as f:
         contents = f.read()
