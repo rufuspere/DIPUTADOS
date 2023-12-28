@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -492,7 +492,7 @@ df0.to_pickle(dire+"\\df0.pkl")
 df1.to_pickle(dire+"\\df1.pkl")
 df2.to_pickle(dire+"\\df2.pkl")
 dfprov.to_pickle(dire+"\\dfprov.pkl")
-resultados.to_pickle((dire+"\\resultados.pkl"))
+resultados.to_pickle(dire+"\\minint.pkl")
 variables={}
 variables['N_PROV']=N_PROV
 variables['N_PARTIDOS']=N_PARTIDOS
