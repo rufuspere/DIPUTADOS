@@ -34,15 +34,9 @@ print('NO OLVIDE AÑADIR EL PREFIJO aux. AL NOMBRE DE LA FUNCIÓN: aux.provincia
 
 print ("\nAntes de iniciar Eleccion3 compruebe los resultados con las funciones definidas previamente o con consultas propias")
 
-raise SystemExit("El programa se detiene aquí pero puede llamar a las funciones y ejecutar celdas posteriores")
-
 aux.lista_partidos()
 
 
 aux.Votos_y_Escaños_Grupos()
 
 aux.minint
-
-
-
-
