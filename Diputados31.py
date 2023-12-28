@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -25,7 +25,7 @@ import os
 import pandas as pd
 dire=os.getcwd()
 print('Directorio de trabajo: ',os.getcwd())
-resultados=pd.read_pickle(dire+"\\resultados.pkl")#contiene los datos de las últimas elecciones
+minint=pd.read_pickle(dire+"\\minint.pkl")#contiene los datos de las últimas elecciones
 #publicados por el MINT.
 
 # %%
