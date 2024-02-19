@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -87,12 +87,13 @@ for i in range(N_PROV):
 #Exporto d'Hondt 
 F=input("¿DESEA EXPORTAR LAS TABLAS d'HONDT? (Y/N)")
 if F=='Y' or F=='Y'.lower():
+    sufijo=input("AÑADA SUFIJO A LAS TABLAS d'HONDT O BLANCO")
     for i in range(N_PROV):
         A=dHondt[i] 
         B=pd.DataFrame(lista_votos[i])
         B[B>0].dropna(axis=0, how='all') 
-        Name='dHondt'+str(i)
-        writer = pd.ExcelWriter(Name+'.xlsx')
+        Name='dHondt'+str(i)+sufijo
+        writer = pd.ExcelWriter(Name+sufijo+'.xlsx')
         A.to_excel(writer,'dHondt')
         B.to_excel(writer,'lista_votos')
         writer.close()

@@ -32,11 +32,11 @@ print('Directorio de trabajo: ',os.getcwd())
 guion="Diputados1"
 
 # %%
-#importar datos de las elecciones. Son del Ministerio del Interior adaptados
+#importar datos de las elecciones. Son de la Xunta de Galicia adaptados
 import pandas as pd 
 import pickle
 import warnings
-#importar datos de las elecciones. Son del Ministerio del Interior adaptados
+#importar datos de las elecciones. Son del Ministerio del Interior adaptados: ej Galicia_Elecc_2020.xlsx
 while True:
     voto=input ('introduce el nombre del fichero de resultados de la votación: ')
     year=input('y el año: ')
@@ -52,7 +52,7 @@ df0.head()#df0 es el resultado de las elecciones
 
 
 # %%
-# importar partidos por grupo
+# importar partidos por grupo: Partidos_2020.xlsx
 parties=input ('introduce el nombre del fichero de partidos: ')
 year=input('y el año: ')
 party=parties+year+'.xlsx'
@@ -211,7 +211,7 @@ df1 = df1.drop(df1.columns[[ a1,a2,a3]], axis=1)
 
 
 # %%
-print('La barrera electoral es \n 0.03 para el Congreso\n 0.05 para las eleciones en la CAM y\n 0 para el Europarlamento')
+print('La barrera electoral es \n 0.03 para el Congreso\n 0.05 para las eleciones en la CAG y\n 0 para el Europarlamento')
 
 # %%
 barrera=input('barrera electoral (<1)')
@@ -491,14 +491,14 @@ if F=='Y' or F=='Y'.lower():
         common=set(A).intersection(set(resultados.loc[0].keys()))
         results=resultados.drop(columns=common,axis=1)
         writer = pd.ExcelWriter(Name+'.xlsx')
-        results.to_excel(writer,sheet_name='DatosMint')
+        results.to_excel(writer,sheet_name='DatosXunta')
         comi=set(B).intersection(set(masde.loc[0].keys()))
         masde1=masde.drop(columns=comi,axis=1)
         masde1.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
     if G=='N' or G=='N'.lower():
         writer = pd.ExcelWriter(Name+'.xlsx')
-        resultados.to_excel(writer,sheet_name='DatosMint1')
+        resultados.to_excel(writer,sheet_name='DatosXunta')
         masde.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
 

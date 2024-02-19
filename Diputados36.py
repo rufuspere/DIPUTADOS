@@ -170,7 +170,7 @@ def CountFrequency(my_list):
 # %%
 import numpy as np
 #es la función que localiza valores en DataFrame
-i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),34693))
+i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),34693,rtol=0,atol=0.01))
 indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
 print('Indices',indices)
 
@@ -189,7 +189,7 @@ for k in range(N_PROV):
         f=[]
         for x in list(set(lista_votos[k][0:int(df3.loc[k]['DIPUTADOS'])])):
             M=np.array(dHondt[k],dtype=float)
-            i,j=np.where(np.isclose(M,x))
+            i,j=np.where(np.isclose(M,x,rtol=0,atol=0.01))
             f.append(list(i))
         #print(k,f)
         
@@ -280,7 +280,7 @@ for k in range(N_PROV):
         F.sort(reverse=True)
         for x in F:#coeficientes d'Hondt a considerar
             M=np.array(dHondt[k],dtype=float)
-            i,j=np.where(np.isclose(M,x))
+            i,j=np.where(np.isclose(M,x,rtol=0,atol=0.01))
             v=list(zip(i,j))
             print(k,x,v,i[0])
             dipus1[k].append(v)

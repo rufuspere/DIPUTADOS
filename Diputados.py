@@ -23,7 +23,7 @@ print('Directorio de trabajo: ',os.getcwd())
 ###################################################################
 # -
 
-#PARTE I: importación de datos del Ministerio del interior
+#PARTE I: importación de datos del Ministerio del interior o CCAA
 listScripts=["Diputados11.py"]
 for script in listScripts:
     with open(script,encoding="utf-8") as f:
@@ -59,6 +59,7 @@ for script in listScripts:
 #PARTE II: INTRODUCIR NUEVOS GRUPOS
 listScripts=["Diputados32.py"]
 for script in listScripts:
+    
     with open(script,encoding="utf-8") as f:
         contents = f.read()
     exec(contents)
@@ -138,3 +139,5 @@ for script in listScripts:
     with open(script,encoding="utf-8") as f:
         contents = f.read()
     exec(contents)
+
+

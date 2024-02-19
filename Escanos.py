@@ -13,36 +13,39 @@
 # ---
 
 # +
-#DIPUTADOS3
+#ESCANOS
 
 # +
 #PARTE I: IMPORTACIÓN DE DATOS
 # -
 
+guion='PARTE I'
 
-guion="PARTE I"
+# %precision %.2f
+
+dire=input('Introducir directorio de trabajo: \n')
 
 import os
-import pandas as pd
-dire=os.getcwd()
+os.chdir(dire)
 print('Directorio de trabajo: ',os.getcwd())
-minint=pd.read_pickle(dire+"\\minint.pkl")#contiene los datos de las últimas elecciones
-#publicados por el MINT.
+
+
+import pickle
+import warnings
+import pandas as pd
 
 # +
-#importar datos de las elecciones. Son de la Xunta 
-#modificados para adaptarse a las hipótesis
-#sobre candidaturas
+#importar Excel con datos de las elecciones. Son del Ministerio del Interior o las CCAA 
+#modificados para adaptarse a las hipótesis sobre candidaturas
 
-import warnings
 while True:
     voto=input ('introduce el nombre del fichero de resultados de la votación: ')
     year=input('y el año: ')
-    extension=input('y la extensión (xls, xlsm,xlsx): ')
-    votos=voto+year+'.'+extension
+    votos=voto+year+'.xlsx'
     try:
         print('nombre del fichero: ',votos)
-        df0 = pd.read_excel(votos,header=0)
+        print(os.path.exists(votos))
+        df0 = pd.read_excel(votos,sheet_name='Hoja1', header=0)
         break
     except:
         print('no existe')
@@ -63,8 +66,6 @@ try:
 except:
     print('no existe')
 #df2 es la lista de partidos y grupos 
-
- 
 
 # -
 
@@ -88,6 +89,8 @@ party2=pd.DataFrame(party2)
 #añado a cada partdo un número de identificación que será el usado en adelante
 warnings.filterwarnings("ignore")
 df2=pd.concat([df2,pd.DataFrame(party2.T)],ignore_index=True).copy()
+
+df2.head()
 
 
 #definimos función que permita conocer la estructura de un DataFrame. Es muy
@@ -222,14 +225,11 @@ for x in l:
     df1[columna]=df1[x+'Votos']/df1['VOTOS_VÁLIDOS']
 
 
-estructura(df1)
-
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
-
 # +
 #################################################################################################################################
+
+# +
+#PARTE II: INTRODUCIR GRUPOS
 # -
 
 guion="PARTE II"
@@ -307,8 +307,6 @@ df11= df11.reindex(columns = df11.columns.tolist()
 df11= df11.reindex(columns = df11.columns.tolist() 
                                   + dgrupos)
 
-
-
 for j in range(N_PROV):
     for x in dgrupos:
         df11.loc[j,list_dgroups[x]]=0
@@ -316,8 +314,6 @@ for j in range(N_PROV):
 #extraigo los diputados a cada candidatura y provincia
 diputados=df11.copy()
 diputados=diputados[diputados.columns.intersection(Z)]    
-
-diputados
 
 #votos por grupos por provincias
 for j in range (N_PROV):#provincias
@@ -364,9 +360,7 @@ df12=df12.fillna(0)
 
 estructura(df12)
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion)
 
 # +
 ################################################################################################################################
@@ -399,17 +393,13 @@ for j in range (N_PROV):#provincias
         df3.loc[j,'PARTIDOS>']=Su
 
 
-df3.loc[0,'PARTIDOS>']
+df3.loc[:]['PARTIDOS>']
 
 df3.insert(loc = 5,
           column = 'VOTOS_REPARTIR',
           value =df3[l].sum(axis=1))
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
-
-df3.loc[:]['DIPUTADOS']
+print("---------------------------------------------------","TERMINADO:",guion)
 
 # +
 #PARTE IV: TABLAS d'HONDT
@@ -495,9 +485,8 @@ if F=='Y' or F=='Y'.lower():
         B.to_excel(writer,'lista_votos')
         writer.close()
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion)
+
 
 # +
 #PARTE V: COMPROBAR SI HAY EMPATES
@@ -506,7 +495,7 @@ print("---------------------------------------------------",
 guion="PARTE V"
 
 # +
-#vemos la lista de los valores repetidos en cada provincia:  repitentes[I] extaídos de lista_votos[I]
+#vemos la lista de los valores de la tabla d'Hondt repetidos en cada provincia:  repitentes[I] extaídos de lista_votos[I]
 repitentes=[[] for i in range(N_PROV) ]
 S=0
 PR=[]
@@ -532,9 +521,8 @@ else:
     Empates=1
 # -
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion)
+
 
 # +
 #PARTE VI: SI HAY EMPATES
@@ -548,6 +536,8 @@ for i in range(N_PROV):
     repeated[i]=list(my_set)
     repeated[i].sort(reverse=True)
 #valores repetidos en cada provincia en la tabla d'Hondt (un solo valor)
+
+repeated[2]
 
 #defino función que identifica y recopila valores repetidos
 from collections import defaultdict
@@ -627,11 +617,9 @@ for i in range(N_PROV):
         n_rep.append(0)
 
 s=[(i,df3.loc[i]['PROVINCIA'].strip()) for i in range(N_PROV)]
-n_rep1=list(zip(s,n_rep))       
+n_rep1=list(zip(s,n_rep))
+print(n_rep1)
 #n_rep1 asocia para cada provincia el número de veces a elegir al azar
-# -
-
-pr_alea
 
 # +
 #comprobación del muestreo
@@ -699,28 +687,6 @@ print('Indices',indices)
 i,j
 #devuelve una tupla
 
-#provincias sin sorteo
-dipus=[[] for k in range(N_PROV)]
-num_part=[]
-elements_count=[[] for k in range(N_PROV)]
-for k in range(N_PROV):
-    dipus[k]=[]
-    if n_rep[k]==0:
-        f=[]
-        for x in list(set(lista_votos[k][0:int(df3.loc[k]['DIPUTADOS'])])):
-            M=np.array(dHondt[k],dtype=float)
-            i,j=np.where(np.isclose(M,x))
-            f.append(list(i))
-        #print(k,f)
-        
-        for z in range(len(f)):
-            dipus[k]=dipus[k]+f[z]
-        a=CountFrequency(dipus[k])
-        elements_count[k].append(a)
-    num_part.append(elements_count[k])
-
-num_part
-
 #lista de candidaturas que recibirán diputados sin muestreo 
 #ordenadas según la regla d'Hondt
 S=0
@@ -737,7 +703,7 @@ for x in l:
     columna='DIPUTADOS'+x
     Dl.append(columna)
 
-Dl
+type(dHondt[0])
 
 for j in range(N_PROV):
     for x in Dl:
@@ -803,7 +769,7 @@ for k in range(N_PROV):
         F.sort(reverse=True)
         for x in F:#coeficientes d'Hondt a considerar
             M=np.array(dHondt[k],dtype=float)
-            i,j=np.where(np.isclose(M,x))
+            i,j=np.where(np.isclose(M,x,rtol=0,atol=0.01))
             v=list(zip(i,j))
             print(k,x,v,i[0])
             dipus1[k].append(v)
@@ -859,15 +825,13 @@ for j in range(N_PROV):
         continue
 
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion)
 
 # +
-#DIPUTADOS37: PARTE VII: ASIGNACIÓN DE ESCAÑOS DEFINITIVA
+#PARTE VII: ASIGNACIÓN DE ESCAÑOS DEFINITIVA
 # -
 
-guion="Diputados37"
+guion="PARTE VII"
 
 df5=df4.copy()
 
@@ -985,9 +949,7 @@ resultados=DF71[NV]
 
 estructura(resultados)
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion)
 
 # +
 #################################################################
@@ -997,26 +959,6 @@ print("---------------------------------------------------",
 # -
 
 guion="PARTE VIII"
-
-estructura(minint)
-
-U=[x for x in minint.loc[0].keys()[list(minint.keys()).index('1Votos'):] ]
-
-#Columnas con cero diputados
-A=[]
-for y in U:
-    if (minint[y] == 0).all():
-        A.append(y)
-
-A
-
-output1=minint.copy()
-
-common=set(A).intersection(set(output1.loc[0].keys()))
-#salida sin ceros
-output2=output1.drop(columns=list(common),axis=1)
-
-estructura(output2)
 
 #salida con ceros de asignaciones
 output3=pd.concat([DF71[VV0],DF71[VV1],DF71[VV2],DF71[VV7],DF71[VV8]],axis=1)
@@ -1048,38 +990,3 @@ for y in M:
 common=set(C).intersection(set(output5.loc[0].keys()))
 #salida sin ceros de >barrera
 output6=output5.drop(columns=list(common),axis=1)
-
-# +
-
-F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
-if F=='Y' or F=='Y'.lower():
-    Res=input("¿Qué nombre desea concatenar con 'Resultados'\n")
-    Name='Resultados'+str(Res)
-    G=input("¿DESEA ELIMINAR VALORES NULOS DE VOTOS?\n\
-    (no es conveniente si se desea comparación con resultados iniciales\n(Y/N)\n") 
-    if G=='Y' or G=='Y'.lower():
-        writer = pd.ExcelWriter(Name+'.xlsx')
-        results=output2
-        results.to_excel(writer,sheet_name='DatosRealesMint')
-        results=output4
-        results.to_excel(writer,sheet_name='VotosReasignados')
-        results=output6
-        results.to_excel(writer,sheet_name='Datos>barrera')
-        writer.close()
-    if G=='N' or G=='N'.lower():
-        writer = pd.ExcelWriter(Name+'.xlsx')
-        results=output1
-        results.to_excel(writer,sheet_name='DatosRealesMint')
-        results=output3
-        results.to_excel(writer,sheet_name='VotosReasignados')
-        results=output5
-        results.to_excel(writer,sheet_name='Datos>barrera')
-        writer.close()
-# -
-
-
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py",'Y EL PROGRAMA')
-
-
