@@ -20,16 +20,23 @@
 guion="Diputados38"
 
 # %%
-#salida con ceros de datos MinInt
-output1=resultados.copy()
+estructura(minint)
 
 # %%
+U=[x for x in minint.loc[0].keys()[list(minint.keys()).index('1Votos'):] ]
+
+# %%
+#Columnas con cero diputados
 A=[]
-M1=[i for i in range(pos(output1,'1Votos'),pos(output1,'DDERECHA'))]
-M=list(output1.loc[0][M1].keys())
-for y in M:
-    if (output1[y] == 0).all():
+for y in U:
+    if (minint[y] == 0).all():
         A.append(y)
+
+# %%
+A
+
+# %%
+output1=minint.copy()
 
 # %%
 common=set(A).intersection(set(output1.loc[0].keys()))
@@ -37,8 +44,14 @@ common=set(A).intersection(set(output1.loc[0].keys()))
 output2=output1.drop(columns=list(common),axis=1)
 
 # %%
+estructura(output2)
+
+# %%
 #salida con ceros de asignaciones
 output3=pd.concat([DF71[VV0],DF71[VV1],DF71[VV2],DF71[VV7],DF71[VV8]],axis=1)
+
+# %%
+estructura(output3)
 
 # %%
 B=[]
@@ -58,10 +71,10 @@ output4=output3.drop(columns=list(common),axis=1)
 output5=pd.concat([DF71[VV0],DF71[VV5],DF71[VV6],DF71[VV7],DF71[VV8]],axis=1)
 
 # %%
-U=[]
-U=VV5+VV7
+X=[]
+X=VV5+VV7
 C=[]
-M=list(output5.loc[0][U].keys())
+M=list(output5.loc[0][X].keys())
 for y in M:
     if (output5[y] == 0).all():
         C.append(y)
@@ -98,3 +111,6 @@ if F=='Y' or F=='Y'.lower():
         results.to_excel(writer,sheet_name='Datos>barrera')
         writer.close()
 
+
+# %%
+print("---------------------------------------------------","TERMINADO:",guion+".py")

@@ -58,6 +58,9 @@ for j in range (N_PROV):#provincias
         df7.loc[j,x]=df7.loc[j][list_vgroups[x]].sum()
 
 # %%
+df7.loc[0]['VDERECHA']
+
+# %%
 #grupos para diputados
 dipugrupos=['DIPDERECHA',
 'DIPCENTRO',
@@ -92,11 +95,20 @@ for j in range (N_PROV):#provincias
         df71.loc[j,x]=df71.loc[j][list_dipugroups[x]].sum()
 
 # %%
+new_l
+
+# %%
+new_d
+
+# %%
 Diputats = ['DIPUTADOS'+str(x) for x in list(df2.keys())]
 
 
 # %%
-#en caso de que los nuevos datos de diputados no se compadezcan con los del Ministerio del Interior (por haber cambiado
+Diputats
+
+# %%
+#en caso de que los nuevos datos de diputados no se compadezcan con los de la  Xunta (por haber cambiado
 # el número de diputados por circunscripción, p.e) igualamos los diputados iniciales con los calculados.
 DF71=df71.copy()
 for j in range (N_PROV):#provincias
@@ -105,6 +117,9 @@ for j in range (N_PROV):#provincias
 for j in range (N_PROV):#provincias
     for x in dipugrupos:
         DF71.loc[j,'D'+re.sub('DIP','',x)]=DF71.loc[j,x]
+
+# %%
+estructura(DF71)
 
 # %%
 V0=[i for i in range(0,pos(DF71,'DIPUTADOS')+1)]
@@ -133,12 +148,13 @@ VV=VV0+VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 NV=VV1+VV2+VV3+VV4+VV5+VV6+VV7+VV8
 
 # %%
+NV
+
+# %%
 DF71.loc[0][vot_grupos]
 
 # %%
 resultados=DF71[NV]
 
 # %%
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion+".py")

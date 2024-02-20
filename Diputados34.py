@@ -52,8 +52,6 @@ for j in range(N_PROV):
     K[j]=pd.DataFrame(Koef[j])  
     K[j].insert(loc=0, column='provincia', value=0, allow_duplicates = False)
 
-Koef
-
 dHondt=[[] for i in range(N_PROV)]
 for i in range(len(df3)):
     dHondt[i]=pd.DataFrame(K[i])
@@ -98,6 +96,4 @@ if F=='Y' or F=='Y'.lower():
         B.to_excel(writer,'lista_votos')
         writer.close()
 
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion+".py")

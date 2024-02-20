@@ -30,7 +30,7 @@ minint=pd.read_pickle(dire+"\\minint.pkl")#contiene los datos de las últimas el
 #publicados por el MINT.
 
 # +
-#importar datos de las elecciones. Son de la Xunta 
+#importar datos de las elecciones. Son Son del Minit o CCAA 
 #modificados para adaptarse a las hipótesis
 #sobre candidaturas
 
@@ -691,7 +691,7 @@ def CountFrequency(my_list):
 
 import numpy as np
 #es la función que localiza valores en DataFrame
-M=np.array(dHondt[3],dtype=float)
+M=np.array(dHondt[0],dtype=float)
 i,j=np.where(np.isclose(M, 39357.3333333333,rtol=0,atol=0.01))
 indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
 print('Indices',indices)

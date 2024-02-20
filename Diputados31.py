@@ -29,8 +29,8 @@ minint=pd.read_pickle(dire+"\\minint.pkl")#contiene los datos de las últimas el
 #publicados por el MINT.
 
 # %%
-#importar datos de las elecciones. Son del Ministerio del 
-#Interior modificados para adaptarse a las hipótesis
+#importar datos de las elecciones. Son Son del Minit o CCAA 
+#modificados para adaptarse a las hipótesis
 #sobre candidaturas
 
 import warnings
@@ -58,6 +58,7 @@ party=parties+year+'.xlsx'
 try:
     print('nombre del fichero: ',party)
     df2 = pd.read_excel(party)
+    
 except:
     print('no existe')
 #df2 es la lista de partidos y grupos 
@@ -74,10 +75,16 @@ l_sinbarr=l
 
 
 # %%
-#defino función que encuentra osición de columna en df
+#defino función que encuentra posición de columna en df
 def pos(df,col):
     return(list(df.keys()).index(col))
 
+
+# %%
+party1=set(df2.loc[1])
+grupos=list(party1)
+party2=pd.Series(df2.columns.values,index=df2.columns.values)
+party2=pd.DataFrame(party2)
 
 # %%
 #añado a cada partdo un número de identificación que será el usado en adelante
@@ -142,9 +149,6 @@ if (df0['TOTAL_VOTANTES']/df0['CENSO_ELECTORAL']).any()>1:
 else:
     print ('¡OK!\n')
     print('Porcentaje de Votantes:',100*df0['TOTAL_VOTANTES'].sum()/df0['CENSO_ELECTORAL'].sum(),'%')
-
-# %%
-list(df0.keys())
 
 # %%
 W1=[]#datos de provincia y votos de cada partidos
@@ -212,6 +216,9 @@ df1 = df1.drop(df1.columns[[ a1,a2,a3]], axis=1)
 
 
 # %%
+estructura(df1)
+
+# %%
 print('La barrera electoral es \n 0.03 para el Congreso\n 0.05 para las eleciones en la CAM y\n 0 para el Europarlamento')
 
 # %%
@@ -239,6 +246,9 @@ for x in l:
 
 
 # %%
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+estructura(df1)
+
+# %%
+print("---------------------------------------------------","TERMINADO:",guion+".py")
+
+# %%

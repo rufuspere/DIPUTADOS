@@ -112,6 +112,12 @@ n_rep1=list(zip(s,n_rep))
 #n_rep1 asocia para cada provincia el número de veces a elegir al azar
 
 # %%
+pr_alea
+
+# %%
+#comprobación del muestreo
+
+# %%
 import random
 M=[[] for o in range(N_PROV)]
 for o in range(N_PROV):
@@ -170,7 +176,8 @@ def CountFrequency(my_list):
 # %%
 import numpy as np
 #es la función que localiza valores en DataFrame
-i,j=np.where(np.isclose(np.array(dHondt[0],dtype=float),34693,rtol=0,atol=0.01))
+M=np.array(dHondt[0],dtype=float)
+i,j=np.where(np.isclose(M, 39357.3333333333,rtol=0,atol=0.01))
 indices=list(zip(i,j))#tupla que da el número de fila y el de columna (f,c) de la tabla d'Hondt
 print('Indices',indices)
 
@@ -189,7 +196,7 @@ for k in range(N_PROV):
         f=[]
         for x in list(set(lista_votos[k][0:int(df3.loc[k]['DIPUTADOS'])])):
             M=np.array(dHondt[k],dtype=float)
-            i,j=np.where(np.isclose(M,x,rtol=0,atol=0.01))
+            i,j=np.where(np.isclose(M,x))
             f.append(list(i))
         #print(k,f)
         
@@ -198,6 +205,9 @@ for k in range(N_PROV):
         a=CountFrequency(dipus[k])
         elements_count[k].append(a)
     num_part.append(elements_count[k])
+
+# %%
+num_part
 
 # %%
 #lista de candidaturas que recibirán diputados sin muestreo 
@@ -216,6 +226,9 @@ Dl=[]
 for x in l:
     columna='DIPUTADOS'+x
     Dl.append(columna)
+
+# %%
+Dl
 
 # %%
 for j in range(N_PROV):
@@ -252,6 +265,9 @@ for k in range(N_PROV):
             df4.loc[k,x]=pretty_dict[k][int(x[9:])]
 
 # %%
+df4.loc[:]['DIPUTADOS3']
+
+# %%
 #lista de provincias sin empates
 nemp=[]
 for k in range(N_PROV):
@@ -263,6 +279,12 @@ for k in range(N_PROV):
     if n_rep[k]!=0:
         emp.append(df1.loc[k]['PROVINCIA'].strip())
 
+
+# %%
+emp
+
+# %%
+nemp
 
 # %%
 #provincias con empates
@@ -280,7 +302,7 @@ for k in range(N_PROV):
         F.sort(reverse=True)
         for x in F:#coeficientes d'Hondt a considerar
             M=np.array(dHondt[k],dtype=float)
-            i,j=np.where(np.isclose(M,x,rtol=0,atol=0.01))
+            i,j=np.where(np.isclose(M,x))
             v=list(zip(i,j))
             print(k,x,v,i[0])
             dipus1[k].append(v)
@@ -313,6 +335,17 @@ for k in range(N_PROV):
 #de índice 3 y 1 escaño para el partido 1.
 
 # %%
+df4.loc[:]['DIPUTADOS1']
+
+# %%
+elements_count1=[[] for k in range(N_PROV)]
+for k in pr_alea:
+    a=CountFrequency(dipus4[k])
+    elements_count1[k].append(a)
+    print(k,elements_count1[k][0])
+# el diccionario elements1_count[k] nos da el par (PARTIDO, ESCAÑOS) para cada PROVINCIA k
+
+# %%
 #corrijo los dHondt para que coincidan los índices con el número de partido
 New_pretty_dict=[[] for x in range(N_PROV)]
 New_indhondt=[[] for x in range(N_PROV)]
@@ -330,6 +363,6 @@ for j in range(N_PROV):
 
 
 # %%
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion+".py")
+
+# %%

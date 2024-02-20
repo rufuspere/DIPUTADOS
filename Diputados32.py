@@ -168,3 +168,4 @@ df12=pd.concat([df11[UU0],df11[UU1],df11[UU2],df[UU3],df11[UU4],df11[UU5],df11[U
 df12=df12.fillna(0)
 
 # %%
+print("---------------------------------------------------","TERMINADO:",guion+".py")

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: hydrogen
 #       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -46,6 +46,4 @@ else:
     Empates=1
 
 # %%
-print("---------------------------------------------------",
-     "---------------------------------------------------",
-     "TERMINADO:",guion+".py")
+print("---------------------------------------------------","TERMINADO:",guion+".py")
