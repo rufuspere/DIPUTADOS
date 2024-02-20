@@ -687,6 +687,26 @@ print('Indices',indices)
 i,j
 #devuelve una tupla
 
+#provincias sin sorteo
+dipus=[[] for k in range(N_PROV)]
+num_part=[]
+elements_count=[[] for k in range(N_PROV)]
+for k in range(N_PROV):
+    dipus[k]=[]
+    if n_rep[k]==0:
+        f=[]
+        for x in list(set(lista_votos[k][0:int(df3.loc[k]['DIPUTADOS'])])):
+            M=np.array(dHondt[k],dtype=float)
+            i,j=np.where(np.isclose(M,x))
+            f.append(list(i))
+        #print(k,f)
+        
+        for z in range(len(f)):
+            dipus[k]=dipus[k]+f[z]
+        a=CountFrequency(dipus[k])
+        elements_count[k].append(a)
+    num_part.append(elements_count[k])
+
 #lista de candidaturas que recibirán diputados sin muestreo 
 #ordenadas según la regla d'Hondt
 S=0
@@ -990,3 +1010,30 @@ for y in M:
 common=set(C).intersection(set(output5.loc[0].keys()))
 #salida sin ceros de >barrera
 output6=output5.drop(columns=list(common),axis=1)
+
+# +
+
+F=input("¿DESEA EXPORTAR LOS RESULTADOS? (Y/N)\n")
+if F=='Y' or F=='Y'.lower():
+    Res=input("¿Qué nombre desea concatenar con 'Resultados'\n")
+    Name='Resultados'+str(Res)
+    G=input("¿DESEA ELIMINAR VALORES NULOS DE VOTOS?\n\
+    (no es conveniente si se desea comparación con resultados iniciales\n(Y/N)\n") 
+    if G=='Y' or G=='Y'.lower():
+        writer = pd.ExcelWriter(Name+'.xlsx')
+        results=output4
+        results.to_excel(writer,sheet_name='VotosReasignados')
+        results=output6
+        results.to_excel(writer,sheet_name='Datos>barrera')
+        writer.close()
+    if G=='N' or G=='N'.lower():
+        writer = pd.ExcelWriter(Name+'.xlsx')
+        results=output3
+        results.to_excel(writer,sheet_name='VotosReasignados')
+        results=output5
+        results.to_excel(writer,sheet_name='Datos>barrera')
+        writer.close()
+
+# -
+
+print("---------------------------------------------------","TERMINADO EL PROGRAMA")
