@@ -307,8 +307,6 @@ df11= df11.reindex(columns = df11.columns.tolist()
 df11= df11.reindex(columns = df11.columns.tolist() 
                                   + dgrupos)
 
-
-
 for j in range(N_PROV):
     for x in dgrupos:
         df11.loc[j,list_dgroups[x]]=0

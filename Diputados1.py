@@ -32,7 +32,7 @@ print('Directorio de trabajo: ',os.getcwd())
 guion="Diputados1"
 
 # %%
-#importar datos de las elecciones. Son de la Xunta de Galicia adaptados
+#importar datos de las elecciones. Son del MinInt o CCAA
 import pandas as pd 
 import pickle
 import warnings
